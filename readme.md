@@ -23,4 +23,7 @@ DEPENDENCIAS UTILIZADAS
 # npm install dotenv // para manejar variables de entorno
 # npm install sequelize //para manejar base de datos relacionales, en este caso POSTGRESQL y en un futuro implementar SQLSever en azure DataBase
 # npm install pg pg-hstore //conctores para base de datos POSTGRES
+# npm install bcryptjs //para encriptar contraseñas y los tokens
+# npm install jsonwebtoken //nos ayudara a crear una logica de login mas segura y compleja
+
 
