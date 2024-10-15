@@ -54,7 +54,13 @@ const ingresar = async(req, res)=>{
     }
 };
 
+//cerrar sesion
+const logout = (req, res) =>{
+    res.json({mensaje:'Has cerrado sesion...'})
+}
+
 module.exports={
     registrar,
     ingresar,
+    logout,
 }
