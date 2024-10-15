@@ -4,7 +4,7 @@ const dbclient = require('./config/db');//llamamos al archivo db.js de la conexi
 const Cliente = require('./models/cliente')// llamamos a los modelos
 const usuarios = require('./routes/login')//llamar las rutas de login y registrar
 const cors = require('cors');//llamar cors para manejar peticiones dsede el frontend
-
+const dashboard = require('./routes/dashboard')//llamar a la ruta
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -21,7 +21,9 @@ app.get('/', (req, res) =>{
     res.send('¡Bienvenido!, la aplicación esta funcionando correctamente... ');
 });
 
+//agregamos las rutas
 app.use('/api/usuarios', usuarios);
+app.use('/api/dashboard', dashboard);
 
 //sincronizar los modelos con la base de datos
 dbclient.sync().then(()=>{
