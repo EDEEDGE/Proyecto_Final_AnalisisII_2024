@@ -1,23 +1,32 @@
-// archivo preparado para conectarnos a la base de datos
-require('dotenv').config();//cargar las variables de entorno desde el .env
-const {Sequelize} = require('sequelize');//llamamos a la dependencia sequelize para base de datos relacional
+require('dotenv').config();
+const { Sequelize } = require('sequelize');
 
-const {DB_TYPE,DB_HOST,DB_PORT,BD_USER,DB_PASSWORD,DB_NAME} = process.env;
+const { DB_TYPE, DB_HOST, DB_PORT, BD_USER, DB_PASSWORD, DB_NAME, SSL } = process.env;
 
-let dbclient; //variable que controla que tipo de base de datos puede soportar el sistema
+let dbclient;
 
-switch(DB_TYPE){
+switch (DB_TYPE) {
     case 'postgresql':
-        dbclient = new Sequelize(DB_NAME,BD_USER,DB_PASSWORD,{
-            host:DB_HOST,
+        dbclient = new Sequelize(DB_NAME, BD_USER, DB_PASSWORD, {
+            host: DB_HOST,
             port: DB_PORT,
-            dialect:'postgres',
+            dialect: 'postgres',
+            dialectOptions: SSL === 'true' ? {
+                ssl: {
+                    require: true,
+                    rejectUnauthorized: false
+                }
+            } : {},
+            pool: {
+                max: 5,
+                min: 0,
+                acquire: 30000,
+                idle: 10000
+            }
         });
         break;
     default:
         throw new Error("BD_TYPE no soportado. Verifica tus variables de entorno");
 }
 
-module.exports=dbclient;
-
-
+module.exports = dbclient;
