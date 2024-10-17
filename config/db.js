@@ -1,23 +1,25 @@
-// archivo preparado para conectarnos a la base de datos
-require('dotenv').config();//cargar las variables de entorno desde el .env
-const {Sequelize} = require('sequelize');//llamamos a la dependencia sequelize para base de datos relacional
+require('dotenv').config(); // cargar las variables de entorno desde el .env
+const { Sequelize } = require('sequelize'); // llamamos a la dependencia sequelize para base de datos relacional
 
-const {DB_TYPE,DB_HOST,DB_PORT,DB_USER,DB_PASSWORD,DB_NAME} = process.env;
+// Destructurar las variables de entorno
+const { DB_TYPE, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
 
-let dbclient; //variable que controla que tipo de base de datos puede soportar el sistema
-
-switch(DB_TYPE){
-    case 'postgresql':
-        dbclient = new Sequelize(DB_NAME,DB_USER,DB_PASSWORD,{
-            host:DB_HOST,
-            port: DB_PORT,
-            dialect:'postgres',
-        });
-        break;
-    default:
-        throw new Error("BD_TYPE no soportado. Verifica tus variables de entorno");
-}
-
-module.exports=dbclient;
-
-
+// Crear el cliente de la base de datos
+const dbclient = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
+    host: DB_HOST,
+    port: DB_PORT,
+    dialect: 'postgres',
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false // Si estás usando un certificado autofirmado
+        }
+    },
+    pool: {
+        max: 5,         // Número máximo de conexiones activas
+        min: 0,         // Número mínimo de conexiones activas
+        acquire: 30000, // Tiempo máximo antes de lanzar un error si no se puede adquirir una conexión
+        idle: 10000     // Tiempo que una conexión puede estar inactiva antes de ser liberada
+    }
+});
+module.exports = dbclient;
