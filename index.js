@@ -1,10 +1,14 @@
 //apartado principal para unificar todo
 const express = require('express');//llamamos a express para crear el servidor
 const dbclient = require('./config/db');//llamamos al archivo db.js de la conexion de la base de datos
-const Cliente = require('./models/cliente')// llamamos a los modelos
+
 const usuarios = require('./routes/login')//llamar las rutas de login y registrar
 const cors = require('cors');//llamar cors para manejar peticiones dsede el frontend
 const dashboard = require('./routes/dashboard')//llamar a la ruta
+
+//llamar a las rutas de test, eliminar si es necesario
+const test = require('./routes/test');
+const models = require('./config/asociaciones');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -25,13 +29,17 @@ app.get('/', (req, res) =>{
 app.use('/api/usuarios', usuarios);
 app.use('/api/dashboard', dashboard);
 
+
+//ruta para testear base de datos
+app.use('/api/test', test);
+
 //sincronizar los modelos con la base de datos
-dbclient.sync().then(()=>{
-    console.log('Base de datos sincronizada... ');
-    app.listen(PORT, ()=>{
+dbclient.sync({ alter: true }).then(() => {
+    console.log('Base de datos sincronizada con alteraciones...');
+    app.listen(PORT, () => {
         console.log(`Servidor corriendo en el puerto ${PORT}`);
     });
-}).catch((err) =>{
-    console.log('Error al sincronizar la base de datos... ', err);
+}).catch((err) => {
+    console.log('Error al sincronizar la base de datos...', err);
 });
 
