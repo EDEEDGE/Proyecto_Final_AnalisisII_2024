@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Panel de Control</title>
+    <link rel="stylesheet" href="../styles/style-fabricantes.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo" id="logo">
+                <img src="../img/electrotech_color.png" alt="Logo de la empresa">
+         </div>
+        <div class="user-info">
+            <div class="user-image"></div>
+            <div class="user-options">
+                <select>
+                    <option>Empleado</option>
+                    <option>Perfil</option>
+                    <option>Cerrar sesión</option>
+                </select>
+            </div>
+        </div>
+    </header>
+    <div class="content-wrapper">
+        <aside class="sidebar">
+            <button id="inicio-button" class="sidebar-button"><i class="fas fa-home"></i><span> Inicio</span></button>
+            <button id="cotizaciones-button" class="sidebar-button"><i class="fas fa-file-invoice-dollar"></i><span> Cotizaciones</span></button>
+            <button id="clientes-button" class="sidebar-button"><i class="fas fa-user-tie"></i><span> Clientes</span></button>
+            <button id="productos-button" class="sidebar-button"><i class="fas fa-box"></i><span> Productos</span></button>
+            <button id="fabricantes-button" class="sidebar-button"><i class="fas fa-industry"></i><span> Fabricantes</span></button>
+            <button id="usuarios-button" class="sidebar-button"><i class="fas fa-users"></i><span> Usuarios</span></button>
+            <button id="configuracion-button" class="sidebar-button"><i class="fas fa-cog"></i><span> Configuración</span></button>
+        </aside>
+        
+        <main>
+            <!-- Barra gris con icono y dirección -->
+            <div class="top-bar">
+                <i class="fas fa-industry"></i>
+                <span>/ Fabricantes</span>
+            </div>
+            
+        </main>
+    </div>
+    <script src="../scripts/script.js"></script>
+</body>
+</html>

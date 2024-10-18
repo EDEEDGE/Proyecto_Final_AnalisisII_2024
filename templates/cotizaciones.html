@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizaciones</title>
+    <link rel="stylesheet" href="../styles/style-cotizaciones.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo" id="logo">
+            <img src="../img/electrotech_color.png" alt="Logo de la empresa">
+        </div>
+        <div class="user-info">
+            <div class="user-image"></div>
+            <div class="user-options">
+                <select>
+                    <option>Empleado</option>
+                    <option>Perfil</option>
+                    <option>Cerrar sesión</option>
+                </select>
+            </div>
+        </div>
+    </header>
+    <div class="content-wrapper">
+        <aside class="sidebar">
+            <button id="inicio-button" class="sidebar-button"><i class="fas fa-home"></i><span> Inicio</span></button>
+            <button id="cotizaciones-button" class="sidebar-button active"><i class="fas fa-file-invoice-dollar"></i><span> Cotizaciones</span></button>
+            <button id="clientes-button" class="sidebar-button"><i class="fas fa-user-tie"></i><span> Clientes</span></button>
+            <button id="productos-button" class="sidebar-button"><i class="fas fa-box"></i><span> Productos</span></button>
+            <button id="fabricantes-button" class="sidebar-button"><i class="fas fa-industry"></i><span> Fabricantes</span></button>
+            <button id="usuarios-button" class="sidebar-button"><i class="fas fa-users"></i><span> Usuarios</span></button>
+            <button id="configuracion-button" class="sidebar-button"><i class="fas fa-cog"></i><span> Configuración</span></button>
+        </aside>
+
+        <main>
+            <div class="top-bar">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>/ Cotizaciones</span>
+            </div>
+
+            <div class="main-container">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar cotizaciones" class="search-input">
+                    <button class="new-quote-btn" id="nueva-cotizacion-button">
+                        <i class="fas fa-plus"></i> Nueva Cotización
+                    </button>
+                </div>             
+
+                <hr class="divider">
+
+                <div class="search-attention">
+                    <label for="attention-search">Atención o empresa:</label>
+                    <input type="text" id="attention-search" placeholder="Buscar por atención o empresa">
+                </div>
+
+                <table class="quotes-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha Alta</th>
+                            <th>Atención</th>
+                            <th>Cliente</th>
+                            <th>Neto</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>15/10/2024</td>
+                            <td>Juan Pérez</td>
+                            <td>Cliente A</td>
+                            <td>$100</td>
+                            <td>$120</td>
+                            <td>
+                                <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                                <button class="delete-btn"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <button class="prev-btn">Anterior</button>
+                    <span>1</span>
+                    <button class="next-btn">Siguiente</button>
+                </div>
+
+                <div class ="modal hidden" id="modal">
+                    <div class ="modal-content">
+                        <span class = "close-nutton" id="closeModal">&times;</span>
+                        <h2>Nueva Cotización</h2>
+                        <hr>
+                    <label for="cliente">Seleccionar Cliente:</label>
+                    <input type="text" id="cliente" placeholder="Cliente" class="input-field">
+                    
+                    <label for="atencion">Atención:</label>
+                    <input type="text" id="atencion" placeholder="Atención" class="input-field">
+                    
+                    <label for="telefono">Teléfono:</label>
+                    <input type="text" id="telefono" placeholder="Teléfono" class="input-field">
+                    
+                    <label for="empresa">Empresa:</label>
+                    <input type="text" id="empresa" placeholder="Empresa" class="input-field">
+                    
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" placeholder="Email" class="input-field">
+                    
+                    <button class="add-product-btn">Agregar Producto</button>
+                    <button class="print-btn">Imprimir</button>
+        
+                    <hr>
+                    <h3>Detalles del Producto</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Cant.</th>
+                                <th>Descripción</th>
+                                <th>Precio Unit.</th>
+                                <th>Precio Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>12345</td>
+                                <td>1</td>
+                                <td>Producto A</td>
+                                <td>$10.00</td>
+                                <td>$10.00</td>
+                                <td><button class="delete-btn">Eliminar</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+        
+                    <h3>Condiciones de Pago</h3>
+                    <label for="condiciones">Condiciones:</label>
+                    <select id="condiciones" class="input-field">
+                        <option>Condición 1</option>
+                        <option>Condición 2</option>
+                    </select>
+        
+                    <label for="validez">Validez:</label>
+                    <select id="validez" class="input-field">
+                        <option>1 Día</option>
+                        <option>1 Semana</option>
+                    </select>
+        
+                    <label for="tiempo">Tiempo:</label>
+                    <select id="tiempo" class="input-field">
+                        <option>Inmediato</option>
+                        <option>3 Días</option>
+                    </select>
+                    </div>
+                </div>
+            </div>        
+            
+        </main>
+    </div>
+    <script src="../scripts/script.js"></script>
+</body>
+</html>
