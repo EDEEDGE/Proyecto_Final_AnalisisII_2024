@@ -1,0 +1,43 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #e8f0ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.inicio-container {
+    text-align: center;
+}
+
+.logo h1 {
+    font-size: 4em;
+    color: #0d3b66;
+}
+
+.logo .tech {
+    color: #3db6fc;
+}
+
+.btn-iniciar {
+    margin-top: 30px;
+    padding: 15px 30px;
+    background-color: #f3f4f6;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.2em;
+    color: #000;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-iniciar:hover {
+    background-color: #d1d1d1;
+}

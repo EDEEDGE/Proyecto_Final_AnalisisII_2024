@@ -1,0 +1,106 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+}
+
+header {
+    background-color: #295274;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.logo {
+    height: 50px; /* Ajusta esto según el tamaño de tu logo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #fff;
+    margin-right: 10px;
+}
+
+.user-options {
+    position: relative;
+}
+
+.user-options select {
+    background-color: transparent;
+    color: white;
+    border: none;
+    appearance: none;
+    padding-right: 20px;
+}
+
+.user-options::after {
+    content: '\25BC';
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 5px;
+    pointer-events: none;
+}
+
+.content-wrapper {
+    display: flex;
+    height: calc(100% - 70px); /* Ajusta este valor según la altura de tu header */
+}
+
+main {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f9f7f7;
+    overflow-y: auto;
+}
+
+.sidebar {
+    width: 335px;
+    background-color: #295274;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Aumentado el espacio entre botones */
+}
+
+.sidebar button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    padding: 15px 25px; /* Aumentado el padding */
+    text-align: left;
+    font-size: 20px; /* Aumentado el tamaño de la fuente */
+    font-weight: 300; /* Peso de fuente más ligero para un aspecto más elegante */
+    cursor: pointer;
+    align-items: center;
+    width: 100%;
+    transition: background-color 0.3s, font-weight 0.3s;
+}
+
+.sidebar button:hover, .sidebar-button.active {
+    background-color: #2ac3d3;
+    font-weight: 400;
+}

@@ -1,0 +1,202 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+}
+
+header {
+    background-color: #295274;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.logo {
+    height: 50px; /* Ajusta esto según el tamaño de tu logo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #fff;
+    margin-right: 10px;
+}
+
+.user-options {
+    position: relative;
+}
+
+.user-options select {
+    background-color: transparent;
+    color: white;
+    border: none;
+    appearance: none;
+    padding-right: 20px;
+}
+
+.user-options::after {
+    content: '\25BC';
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 5px;
+    pointer-events: none;
+}
+
+.content-wrapper {
+    display: flex;
+    height: calc(100% - 70px); /* Ajusta este valor según la altura de tu header */
+}
+
+main {
+    flex-grow: 1;
+    padding: 0px;
+    background-color: #f9f7f7;
+    overflow-y: auto;
+}
+
+.sidebar {
+    width: 335px;
+    background-color: #295274;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Aumentado el espacio entre botones */
+}
+
+.sidebar button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    padding: 15px 25px; /* Aumentado el padding */
+    text-align: left;
+    font-size: 20px; /* Aumentado el tamaño de la fuente */
+    font-weight: 300; /* Peso de fuente más ligero para un aspecto más elegante */
+    cursor: pointer;
+    align-items: center;
+    width: 100%;
+    transition: background-color 0.3s, font-weight 0.3s;
+}
+
+.sidebar-button.active {
+    background-color: #2ac3d3; /* Color que quieras para el botón activo */
+    font-weight: 400; /* Peso de fuente más destacado */
+}
+
+.sidebar button:hover, .sidebar-button.active {
+    background-color: #2ac3d3;
+    font-weight: 400;
+}
+
+.sidebar-button {
+    transition: background-color 0.3s, font-weight 0.3s;
+}
+
+/* Barra superior gris */
+.top-bar {
+    background-color: #ecebeb; /* Gris claro */
+    padding: 20px;
+    align-items: center;
+    font-size: 18px;
+    color: #999999;
+    margin: 0;
+    width: 100%;
+    position: relative;
+    left: 0;
+    box-sizing: border-box;
+}
+
+.top-bar i {
+    margin-right: 10px;
+    font-size: 22px;
+}
+
+/* Título */
+h1 {
+    padding: 20px;
+    font-size: 28px;
+    margin-top: 20px;
+    color: #295274; /* Mismo color que tu sidebar */
+}
+
+/* Sección de iconos con detalles */
+
+.icon-details {
+    display: flex;
+    flex-direction: center;
+    gap: 112px; /* Espacio entre cada caja de iconos */
+}
+
+/* Estilo de las cajas de iconos */
+.icon-box {
+    display: flex;
+    align-items: center;
+    padding: 30px; /* Espacio dentro de cada caja */
+}
+
+/* Estilos para el contenedor del icono */
+.icon {
+    background-color: inherit; /* Usar el color de fondo de la caja */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 110px; /* Ancho fijo para el icono */
+    height: 110px; /* Alto fijo para el icono */
+}
+
+/* Tamaños de los iconos */
+.icon i {
+    font-size: 80px; /* Tamaño grande del icono */
+    color: white; /* Color del icono */
+}
+
+/* Estilos para el cuadro de texto */
+.text-box {
+    margin: 0; /* Espacio entre icono y texto */
+    padding: 15px; /* Padding para el cuadro de texto */
+    background-color: white; /* Fondo blanco para el texto */
+    flex-grow: 1; /* Permite que el cuadro de texto ocupe el espacio restante */
+    color: #333; /* Color del texto */
+    font-size: 18px; /* Tamaño del texto */
+    width: 110px;
+    height: 80px;
+}
+
+/* Colores específicos para cada tipo de icono */
+.celeste .icon {
+    background-color: #57dcfa; /* Color celeste para cotizaciones */
+}
+
+.naranja .icon {
+    background-color: #ffcc40; /* Color naranja para productos */
+}
+
+.gris .icon {
+    background-color: #8dc4cb; /* Color gris para fabricantes */
+}
+
+.rojo .icon {
+    background-color: #f44343; /* Color rojo para clientes */
+}
