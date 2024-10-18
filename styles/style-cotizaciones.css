@@ -1,0 +1,265 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+}
+
+header {
+    background-color: #295274;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.logo {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #fff;
+    margin-right: 10px;
+}
+
+.user-options select {
+    background-color: transparent;
+    color: white;
+    border: none;
+    appearance: none;
+    padding-right: 20px;
+}
+
+.content-wrapper {
+    display: flex;
+    height: calc(100% - 70px);
+}
+
+main {
+    flex-grow: 1;
+    background-color: #f9f7f7;
+}
+
+/* Barra superior gris */
+.top-bar {
+    background-color: #ecebeb; /* Gris claro */
+    padding: 20px;
+    align-items: center;
+    font-size: 18px;
+    color: #999999;
+    margin: 0;
+    width: 100%;
+    position: relative;
+    left: 0;
+    box-sizing: border-box;
+}
+
+.top-bar i {
+    margin-right: 10px;
+    font-size: 22px;
+}
+
+.sidebar {
+    width: 335px;
+    background-color: #295274;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.sidebar button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    padding: 15px 25px;
+    text-align: left;
+    font-size: 20px;
+    font-weight: 300;
+    cursor: pointer;
+    align-items: center;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.sidebar-button.active {
+    background-color: #2ac3d3;
+    font-weight: 400;
+}
+
+/* Estilos específicos del main */
+.main-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.search-input {
+    padding: 10px;
+    font-size: 16px;
+    border: none; /* Sin borde */
+    width: 100%; /* Ocupará todo el espacio disponible */
+    margin-right: -1px; /* Alinear con el botón */
+}
+
+.search-bar i {
+    font-size: 22px;
+    margin-right: 10px;
+}
+
+.new-quote-btn {
+    background-color: #2ac3d3;
+    color: white;
+    padding: 10px 15px;
+    border: none; /* Sin borde */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.new-quote-btn i {
+    margin-right: 5px;
+}
+
+/* Línea divisora */
+.divider {
+    border: 0;
+    height: 1px;
+    background-color: #ccc;
+    margin: 20px 0;
+}
+
+/* Sección de atención o empresa */
+.search-attention {
+    display: flex;
+    align-items: center;
+    margin: 20px 0; /* Espaciado superior e inferior */
+}
+
+.search-attention label {
+    margin-right: 10px;
+}
+
+.search-attention input {
+    padding: 8px;
+    width: 300px;
+}
+
+/* Tabla de cotizaciones */
+.quotes-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.quotes-table th {
+    background-color: #ffd700;
+    padding: 10px;
+    text-align: left;
+    color: #333;
+}
+
+.quotes-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.edit-btn {
+    background-color: #ffcc40; /* Fondo amarillo */
+    color: white;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.delete-btn {
+    background-color: #f44343; /* Fondo rojo */
+    color: white;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Paginación */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.pagination button {
+    padding: 10px;
+    border: none;
+    background-color: #2ac3d3;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.hidden {
+    display: none;
+}
+
+.modal {
+    display: flex; /* Flexbox para centrar el contenido */
+    justify-content: center;
+    align-items: center;
+    position: fixed; /* Fijo en la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+    z-index: 1000; /* Asegúrate de que esté encima de otros elementos */
+}
+
+.modal-content {
+    background-color: #ffffff; /* Fondo blanco para el modal */
+    padding: 20px; /* Espaciado interno */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra */
+    width: 80%; /* Ancho del modal */
+    max-width: 600px; /* Ancho máximo */
+}
+
+.close-button {
+    color: #aaa; /* Color del botón de cerrar */
+    float: right; /* Alinear a la derecha */
+    font-size: 28px; /* Tamaño del texto */
+    font-weight: bold; /* Negrita */
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black; /* Cambia el color al pasar el mouse */
+    text-decoration: none; /* Sin subrayado */
+    cursor: pointer; /* Cursor de puntero */
+}
