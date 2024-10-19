@@ -28,29 +28,28 @@ const registrar = async(req, res) =>{
 };
 
 //iniciar sesion
-const ingresar = async(req, res)=>{
-    const {nombre, password} = req.body;
+const ingresar = async (req, res) => {
+    const { nombre, password } = req.body;
 
-    try{
-        //buscar nombre
-        const usuario = await Usuario01.findOne({where:{nombre}});
-        if(!usuario){
-            return res.status(400).json({mensaje:'Usuario encontrado'});
+    try {
+        // Buscar el usuario por nombre
+        const usuario = await Usuario01.findOne({ where: { nombre } });
+        if (!usuario) {
+            return res.status(400).json({ mensaje: 'Usuario no encontrado' }); // Mensaje corregido
         }
 
-        //verificar si la contraseña es correcta
+        // Verificar si la contraseña es correcta
         const valido = await bcrypt.compare(password, usuario.password);
-        if(!valido){
-            return res.status(400).json({mensaje:'Contraseña incorrecta...'});
+        if (!valido) {
+            return res.status(400).json({ mensaje: 'Contraseña incorrecta...' });
         }
         
-        //generar token jwt usando el servicio de JWT
-        const token = jwt.generarToken({id: usuario.id, nombre: usuario.nombre});
-        res.json({token});
-    }
-    catch(error){
-        console.error('Error al iniciar sesion...');
-        req.status(500).json({mensaje:'Error en el servidor...'});
+        // Generar token JWT usando el servicio de JWT
+        const token = jwt.generarToken({ id: usuario.id, nombre: usuario.nombre });
+        res.json({ token }); // Responder con el token
+    } catch (error) {
+        console.error('Error al iniciar sesión:', error); // Registrar error en la consola
+        res.status(500).json({ mensaje: 'Error en el servidor...' }); // Usar res en lugar de req
     }
 };
 
