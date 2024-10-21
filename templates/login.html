@@ -3,20 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Electra Tech - Login</title>
-    <link rel="stylesheet" href="style-login.css">
+    <title>Login Tienda de Electrónica</title>
+    <link rel="stylesheet" href="../styles/style-login.css">
 </head>
 <body>
     <div class="login-container">
-        <div class="login-logo">
-            <h1>ElectrO <span class="tech">Tech</span></h1>
-            <p>Tienda de Electrónica</p>
+        <div class="left-section">
+            <img src="../img/electrotech_color.png" alt="Tienda de Electrónica" class="store-image">
+            <h2>Tienda de Electrónica</h2>
         </div>
-        <form class="login-form">
-            <input type="text" placeholder="Usuario" required>
-            <input type="password" placeholder="Contraseña" required>
-            <button type="submit">Login</button>
-        </form>
+        <div class="separator"></div>
+        <div class="right-section">
+            <img src="../img/usuarios.png" alt="Usuario" class="user-icon">
+            <div class="input-group">
+                <img src="../img/usuario.png" alt="Username Icon" class="input-icon">
+                <input type="text" placeholder="Username" class="input-box">
+            </div>
+            <div class="input-group">
+                <img src="../img/password.png" alt="Password Icon" class="input-icon">
+                <input type="password" placeholder="Password" class="input-box">
+            </div>
+            <button class="login-button">Login</button>
+            <a href="#" class="forgot-password">Recuperar contraseña</a>
+        </div>
     </div>
 </body>
 </html>
