@@ -1,106 +1,172 @@
-body, html {
+* {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
-    height: 100%;
-}
-
-header {
-    background-color: #295274;
-    color: white;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
     box-sizing: border-box;
 }
 
-.logo {
-    height: 50px; /* Ajusta esto según el tamaño de tu logo */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Header styles */
+.header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    background-color: #295274; /* Color celeste */
+    padding: 10px 20px;
 }
 
-.logo img {
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
+/* Sidebar styles */
+.sidebar {
+    width: 340px;
+    background-color: #295274; /* Mismo color que el header */
+    padding: 20px;
 }
 
+/* Store image styles */
+.store-image {
+    width: 300px;
+    height: 50px;
+}
+
+
+/* User info styles */
 .user-info {
     display: flex;
     align-items: center;
 }
 
-.user-image {
+.usr-icon {
+    width: 30px;
+    height: 30px;
+    filter: brightness(0) invert(1); /*Invierte el color de los iconos*/
+}
+
+.employee-select {
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0); /* Fondo transparente */
+    border: none;
+    color: white;
+}
+
+.container {
+    display: flex;
+    height: calc(100vh - 70px); /* Altura del header */
+}
+
+/* Sidebar button styles */
+.sidebar-button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff; /* Texto en blanco para el panel izquierdo */
+    transition: background-color 0.3s;/*Para efecto del hover */
+    font-weight: 600;
+}
+
+.sidebar-button img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    filter: brightness(0) invert(1); /*Invierte el color de los iconos*/
+}
+
+/* Hover effect for sidebar buttons */
+.sidebar-button:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Fondo más claro al pasar el mouse */
+}
+
+.sidebar-button.active {
+    background-color: #2ac3d3;    
+}
+
+/* Estios del Main*/
+.main {
+    flex: 1;
+    background-color: #f8f5f5;
+}
+
+.main-header {
+    display: flex;
+    align-items: center;
+    background-color: #ecebeb; /* Color gris */
+    padding: 10px;
+    border-radius: 5px;
+    height: 70px;
+    color: #818181;
+}
+
+.main-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    filter: grayscale(100%); /* Convierte el icono a gris */
+    opacity: 0.5;
+}
+
+.panel-title {
+    margin-top: 40px; /* Espacio entre el encabezado gris y el título */
+    margin-left: 50px;
+    font-size: 40px;
+    font-weight: lighter;
+}
+
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+.card {
+    display: flex;
+    flex: 1 1 220px; /* Responsive */
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+    width: 100px;
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px 0 0 5px;
+}
+
+.icon-small {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
-    background-color: #fff;
-    margin-right: 10px;
 }
 
-.user-options {
-    position: relative;
-}
-
-.user-options select {
-    background-color: transparent;
-    color: white;
-    border: none;
-    appearance: none;
-    padding-right: 20px;
-}
-
-.user-options::after {
-    content: '\25BC';
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0 5px;
-    pointer-events: none;
-}
-
-.content-wrapper {
-    display: flex;
-    height: calc(100% - 70px); /* Ajusta este valor según la altura de tu header */
-}
-
-main {
-    flex-grow: 1;
-    padding: 20px;
-    background-color: #f9f7f7;
-    overflow-y: auto;
-}
-
-.sidebar {
-    width: 335px;
-    background-color: #295274;
-    padding: 20px;
-    box-sizing: border-box;
-    overflow-y: auto;
+.card-info {
+    flex: 1;
+    padding: 10px;
+    border-radius: 0 5px 5px 0;
     display: flex;
     flex-direction: column;
-    gap: 25px; /* Aumentado el espacio entre botones */
+    justify-content: center;
 }
 
-.sidebar button {
-    background-color: transparent;
-    border: none;
-    color: white;
-    padding: 15px 25px; /* Aumentado el padding */
-    text-align: left;
-    font-size: 20px; /* Aumentado el tamaño de la fuente */
-    font-weight: 300; /* Peso de fuente más ligero para un aspecto más elegante */
-    cursor: pointer;
-    align-items: center;
-    width: 100%;
-    transition: background-color 0.3s, font-weight 0.3s;
+h3 {
+    font-weight: lighter;
+    color: #494949;
 }
 
-.sidebar button:hover, .sidebar-button.active {
-    background-color: #2ac3d3;
-    font-weight: 400;
+.number {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 5px;
 }
