@@ -2,42 +2,61 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
 }
 
 body {
-    background-color: #e8f0ff;
+    font-family: Arial, sans-serif;
+    background-color: white;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
 
-.inicio-container {
+.container {
+    position: relative;
     text-align: center;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
 }
 
-.logo h1 {
-    font-size: 4em;
-    color: #0d3b66;
+.half-circle {
+    width: 100%;
+    height: 50vh;
+    background-color: #00CFFF; /* Color celeste */
+    border-bottom-left-radius: 100% 50%;
+    border-bottom-right-radius: 100% 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
 }
 
-.logo .tech {
-    color: #3db6fc;
+.center-image {
+    width: 1000px;
+    height: 150px;
+    margin-bottom: 50px; /* Para colocar la imagen un poco arriba del borde del semicírculo */
+    z-index: 1;
 }
 
-.btn-iniciar {
-    margin-top: 30px;
-    padding: 15px 30px;
-    background-color: #f3f4f6;
+.start-button {
+    position: absolute;
+    bottom: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: #d3d3d3; /* Color gris */
+    color: rgb(0, 0, 0);
     border: none;
     border-radius: 10px;
-    font-size: 1.2em;
-    color: #000;
     cursor: pointer;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 30px;
+    z-index: 1;
 }
 
-.btn-iniciar:hover {
-    background-color: #d1d1d1;
+.start-button:hover {
+    background-color: #e9e9e9;
 }
