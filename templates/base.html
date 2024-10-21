@@ -3,41 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Empresa</title>
+    <title>Pantalla de Inicio - Panel de Control</title>
     <link rel="stylesheet" href="../styles/styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
 </head>
 <body>
-    <header>
-        <div class="logo" id="logo">
-            <img src="../img/electrotech_color.png" alt="Logo de la empresa">
-        </div>
+    <header class="header">
+        <img src="../img/electrotech_color.png" alt="Tienda" class="store-image">
         <div class="user-info">
-            <div class="user-image"></div>
-            <div class="user-options">
-                <select>
-                    <option>Empleado</option>
-                    <option>Perfil</option>
-                    <option>Cerrar sesión</option>
-                </select>
-            </div>
+            <img src ="../img/usuario.png" alt="Usuario" class="usr-icon">
+            <select id="empleado" class="employee-select">
+                <option value="empleado1">Empleado 1</option>
+                <option value="empleado2">Empleado 2</option>
+                <option value="empleado3">Empleado 3</option>
+                <option value="cerrar-sesion">Cerrar Sesión</option>
+            </select>
         </div>
     </header>
-    <div class="content-wrapper">
-        <aside class="sidebar">
-            <button id="inicio-button" class="sidebar-button"><i class="fas fa-home"></i><span> Inicio</span></button>
-            <button id="cotizaciones-button" class="sidebar-button"><i class="fas fa-file-invoice-dollar"></i><span> Cotizaciones</span></button>
-            <button id="clientes-button" class="sidebar-button"><i class="fas fa-user-tie"></i><span> Clientes</span></button>
-            <button id="productos-button" class="sidebar-button"><i class="fas fa-box"></i><span> Productos</span></button>
-            <button id="fabricantes-button" class="sidebar-button"><i class="fas fa-industry"></i><span> Fabricantes</span></button>
-            <button id="usuarios-button" class="sidebar-button"><i class="fas fa-users"></i><span> Usuarios</span></button>
-            <button id="configuracion-button" class="sidebar-button"><i class="fas fa-cog"></i><span> Configuración</span></button>
-        </aside>
-        
-        <main>
-            <!-- Contenido principal aquí -->
+    <div class="container">
+        <nav class="sidebar">
+            <button class="sidebar-button active"><img src="../img/inicio.png" alt="Inicio"> Inicio</button>
+            <button class="sidebar-button"><img src="../img/cotizaciones.png" alt="Cotizaciones"> Cotizaciones</button>
+            <button class="sidebar-button"><img src="../img/usuario.png" alt="Clientes"> Clientes</button>
+            <button class="sidebar-button"><img src="../img/productos1.png" alt="Productos"> Productos</button>
+            <button class="sidebar-button"><img src="../img/fabricantes.png" alt="Fabricantes"> Fabricantes</button>
+            <button class="sidebar-button"><img src="../img/usuarios.png" alt="Usuarios"> Usuarios</button>
+            <button class="sidebar-button"><img src="../img/configuracion.png" alt="Configuraciones"> Configuracion</button>
+        </nav>
+        <main class="main">
+            <div class="main-header">
+                <img src="../img/inicio.png" alt="Inicio" class="main-icon">/ Inicio
+            </div>
+            <h2 class="panel-title">Panel de Control</h2>
+            <div class="cards">
+                <div class="card">
+                    <div class="card-icon" style="background-color: #54d7f9;">
+                        <img src="../img/cotizaciones.png" alt="Cotizaciones" class="icon-small">
+                    </div>
+                    <div class="card-info" style="background-color: #ffffff;">
+                        <h3>Cotizaciones</h3>
+                        <span class="number">25</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon" style="background-color: #fccc42;">
+                        <img src="../img/productos1.png" alt="Productos" class="icon-small">
+                    </div>
+                    <div class="card-info" style="background-color: #ffffff;">
+                        <h3>Productos</h3>
+                        <span class="number">150</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon" style="background-color: #8ac2c9;">
+                        <img src="../img/fabricantes.png" alt="Fabricantes" class="icon-small">
+                    </div>
+                    <div class="card-info" style="background-color: #ffffff;">
+                        <h3>Fabricantes</h3>
+                        <span class="number">10</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon" style="background-color: #f34642">
+                        <img src="../img/usuarios.png" alt="Clientes" class="icon-small">
+                    </div>
+                    <div class="card-info" style="background-color: #ffffff;">
+                        <h3>Clientes</h3>
+                        <span class="number">75</span>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
-    <script src="../scripts/script.js"></script>
 </body>
 </html>
