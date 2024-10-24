@@ -5,6 +5,7 @@ const dbclient = require('./config/db');//llamamos al archivo db.js de la conexi
 const usuarios = require('./routes/login')//llamar las rutas de login y registrar
 const cors = require('cors');//llamar cors para manejar peticiones dsede el frontend
 const dashboard = require('./routes/dashboard')//llamar a la ruta
+const clientes = require('./routes/clientes');//ruta para los clientes
 
 //llamar a las rutas de test, eliminar si es necesario
 const test = require('./routes/test');
@@ -21,14 +22,14 @@ app.use(cors({
 //Creamos un middleware para manejar el JSON
 app.use(express.json());
 
-app.get('/', (req, res) =>{
+app.get('/', (req, res) => {
     res.send('¡Bienvenido!, la aplicación esta funcionando correctamente... ');
 });
 
 //agregamos las rutas
 app.use('/api/usuarios', usuarios);
 app.use('/api/dashboard', dashboard);
-
+app.use('/api/clientes', clientes);
 
 //ruta para testear base de datos
 app.use('/api/test', test);
