@@ -6,6 +6,7 @@ const usuarios = require('./routes/login')//llamar las rutas de login y registra
 const cors = require('cors');//llamar cors para manejar peticiones dsede el frontend
 const dashboard = require('./routes/dashboard')//llamar a la ruta
 const clientes = require('./routes/clientes');//ruta para los clientes
+const imagenes = require('./routes/imagenes'); // rutas de las imagenes
 
 //llamar a las rutas de test, eliminar si es necesario
 const test = require('./routes/test');
@@ -16,7 +17,7 @@ const PORT = process.env.PORT || 3002;
 
 //habilitar cors para permitir peticiones desde el frontend(localhost3005)
 app.use(cors({
-    origin: 'http://localhost:3005' //direccion del otro frontend
+    origin: ['http://127.0.0.1:5500', 'http://localhost:3005'] //direccion del otro frontend
 }));
 
 //Creamos un middleware para manejar el JSON
@@ -33,6 +34,10 @@ app.use('/api/clientes', clientes);
 
 //ruta para testear base de datos
 app.use('/api/test', test);
+
+//probar el sistema de guardado de imagenes
+app.use('/api/imagenes', imagenes);
+
 
 //sincronizar los modelos con la base de datos
 dbclient.sync({ alter: true }).then(() => {
