@@ -1,20 +1,22 @@
-const jwt = require('jsonwebtoken');// dependencia necesaria  para el JWT
+const { verificarToken } = require('../services/jwt');
 
-//middleware para verificar el token JWT
-const verificarToken = (req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1]; // Encabezado para la autenticación
-
+const autenticarToken = (req, res, next) => {
+    const token = req.headers['authorization']?.split(' ')[1]; //extrwaaaazzzaa  añaa
     if (!token) {
-        return res.status(403).json({ mensaje: 'Token no proporcionado. Se requiere el Token para acceder al Dashboard.' });
+        return res.status(403).json({ mensaje: 'Token no proporcionado. Se requiere el Token para acceder.' });
     }
 
-    try {
-        const decode = jwt.verify(token, 'clave_secreta_jwt'); // Verificamos el token
-        req.user = decode; // Almacenamos la información del usuario en la solicitud
-        next(); // Llamamos al siguiente middleware o controlador
-    } catch (error) {
-        return res.status(401).json({ mensaje: 'Token inválido o expirado.' }); // Respuesta si el token es inválido
+    try{
+        //verificamos el token utilizando el servicio de jwt 
+        //termina el proceso y saltamos al siguietne controlador o middleware
+        const decode = verificarToken(token);
+        req.user = decode;
+        next();
+    }
+    catch (error) {
+        return res.status(401).json({ mensaje: 'Token inválido o expirado.' });
     }
 };
 
-module.exports = verificarToken;
+//exportamos la funcion 
+module.exports = autenticarToken;

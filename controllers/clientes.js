@@ -1,134 +1,106 @@
+//controlador principal de clientes
+const { where } = require('sequelize');
 const Cliente = require('../models/cliente');
 
-//crear nuevo cliente 
-const registrarCliente = async (req, res) => {
-    const { nombre, direccion, correoElectronico, telefono } = req.body;
+//crear nuevo cliente
+const crearCliente = async (req, res) => {
+    const { nombre, direccion, correoElectronico, telefono, DPI, fechaIngreso } = req.body;
 
     try {
+        //creamos un nuevo usuario en la base dedatos y la info la guardamos en una variable para mostrarla en el servidor como respuesta.
+        const nuevo = await Cliente.create({ nombre, direccion, correoElectronico, telefono, DPI, fechaIngreso });
+        res.status(201).json({ mensaje: 'Cliente creado con exito...', cliente: nuevo });
 
-        //verificar si el cliente existe o ya ha sido registrado el correo electronico
-        const clienteExistente = await Cliente.findOne({ where: { correoElectronico } });
-        if (clienteExistente) {
-            return res.status(400).json({ mensaje: 'El correo electronico ya ha sido registrado...' });
-        }
-
-
-        const nuevoCliente = await Cliente.create({ nombre, direccion, correoElectronico, telefono });
-        res.status(201).json({ mensaje: 'Cliente registrado correctamente...', nuevoCliente });
-    }
-    catch (error) {
-        console.error('Error al registrar el cliente...', error);
+    } catch (error) {
+        console.error('Error al crear nuevo Cliente...', error);
         res.status(500).json({ mensaje: 'Error en el servidor...' });
     }
 };
 
-//obtener a los clientes para las listas 
+//obtener todos los clientes
 const obtenerClientes = async (req, res) => {
     try {
-        const clientes = await Cliente.findAll();
-        res.status(200).json(clientes);
-    }
-    catch (error) {
-        console.error('Error al obtener a los clientes...', error);
+        const todos = await Cliente.findAll();//obtenemos todos en la abse de datos
+        res.status(200).json(todos);//al obtener todos los clientes los guarda en un json para luego implementarlos en el frontend
+    } catch (error) {
+        console.error('Error al obtener a todos los clientes...', error);
         res.status(500).json({ mensaje: 'Error en el servidor...' });
     }
 };
 
-//buscar cliente por ID
-const buscarClientePorCorreo = async (req, res) => {
-    const { correoElectronico } = req.params;
-
-    try {
-        const cliente = await Cliente.findOne({ where: { correoElectronico } });
-
-        if(!cliente){
-            return res.status(404).json({ mensaje: 'Cliente no encontrado...'})
-        }
-        res.status(200).json(cliente);
-    }
-    catch (error) {
-        console.error('Error al obtener al cliente...', error);
-        res.status(500).json({ mensaje: 'Error en el servidor...' });
-    }
-}
-
-// obtener un cliente por ID, se puede buscar por otro parametro
-const obtenerClientePorID = async (req, res) => {
+//obtener el cliente por id, mas adelatne se podran tambein agregar metodos para bsucar por nombre, correo etc
+const obtenerClientesPorId = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const cliente = await Cliente.findByPk(id);
-        if (!cliente) {
-            return res.status(404).json({ mensaje: 'Cliente no encontrado...' });
+        const obtener = await Cliente.findByPk(id);
+        //comprobamos si se encontro o no al usaurio
+        if (!obtener) {
+            return res.status(404).json({ mensaje: 'No se encontro un cliente con ese ID' });
         }
-        res.status(200).json(cliente);
-    }
-    catch (error) {
-        console.error('Error al obtener al cliente...', error);
+
+        //mostramos al usaurio obtenido por el id
+        res.status(200).json(obtener);
+
+    } catch (error) {
+        console.error('Error al obtener el usuario...', error);
         res.status(500).json({ mensaje: 'Error en el servidor...' });
     }
+
 };
 
-//actualizar el registro por id
-const actualizarClientePorID = async (req, res) => {
+//actualizar cliente
+const actualizarCliente = async (req, res) => {
     const { id } = req.params;
-    const { nombre, direccion, correoElectronico, telefono } = req.body;
+    const { nombre, direccion, correoElectronico, telefono, DPI, fechaIngreso } = req.body;
 
     try {
         const cliente = await Cliente.findByPk(id);
         if (!cliente) {
-            return res.status(404).json({ mensaje: 'Cliente no encontrado...' });
-        }
-
-        //verificar si existe el correo
-        const clienteConMismoCorreo = await Cliente.findOne({ where: { correoElectronico } });
-        if (clienteConMismoCorreo && clienteConMismoCorreo.id !== parseInt(id)) {
-            return res.status(400).json({ mensaje: 'El correo ya fue registrado...' });
+            return res.status(404).json({ mensaje: 'No se ha encontrado al usuario...' });
         }
 
 
-        //si existe el registro actualizar
-        cliente.nombre = nombre;
-        cliente.direccion = direccion;
-        cliente.correoElectronico = correoElectronico;
-        cliente.telefono = telefono;
+        //obtenermos y actualizamos al cliente
+        await Cliente.update(
+            { nombre, direccion, correoElectronico, telefono, DPI, fechaIngreso },
+            { where: { id }},
+        );
 
-        await cliente.save();
-        res.status(200).json({ mensaje: 'Cliente actualizado correctamente', cliente });
+        const clienteActualizado = await Cliente.findByPk(id);
 
-    }
-    catch (error) {
-        console.error('Error al actualizar el cliente...', error);
+        //respuesta del servidor
+        res.status(200).json({ mensaje: 'Cliente actualizado correctamente...', clienteActualizado });
+    } catch (error) {
+        console.error('Error al actualizar cliente...', error);
         res.status(500).json({ mensaje: 'Error en el servidor...' });
     }
+
 };
 
-// eliminar cliente por ID
-const eliminarClientePorID = async (req, res) => {
+//eliminar cliente
+const eliminarCliente = async (req, res) => {
     const { id } = req.params;
 
     try {
         const cliente = await Cliente.findByPk(id);
-        if (!cliente) {
-            return res.status(404).json({ mensaje: 'No se encontro el cliente...' });
+        if(!cliente) {
+            return res.status(404).json({mensaje: 'No se encontro al Cliente...'});
         }
+
         await cliente.destroy();
-        res.status(200).json({ mensaje: 'Cliente eliminado correctamente...' });
-    }
-    catch (error) {
-        console.error('Error al eliminar el cliente...', error);
-        res.status(500).json({ mensaje: 'Error en el servidor...' });
+        res.status(200).json({ mensaje: 'Se ha eliminado al Cliente...' });
+    } catch (error) {
+        console.error('Error al eliminar Cliente...', error);
+        res.status(500).json({ mensaje: 'Error en el seridor...' });
     }
 };
 
 
-
-//exportar las funciones
 module.exports = {
-    registrarCliente,
-    obtenerClientes,
-    buscarClientePorCorreo,
-    obtenerClientePorID,
-    actualizarClientePorID,
-    eliminarClientePorID,
-};
+    crearCliente, 
+    obtenerClientes, 
+    obtenerClientesPorId,
+    actualizarCliente,
+    eliminarCliente,
+}

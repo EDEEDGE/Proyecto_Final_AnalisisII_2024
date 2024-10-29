@@ -1,17 +1,16 @@
 //apartado principal para unificar todo
 const express = require('express');//llamamos a express para crear el servidor
 const dbclient = require('./config/db');//llamamos al archivo db.js de la conexion de la base de datos
-
-const usuarios = require('./routes/login')//llamar las rutas de login y registrar
 const cors = require('cors');//llamar cors para manejar peticiones dsede el frontend
-const dashboard = require('./routes/dashboard')//llamar a la ruta
-const clientes = require('./routes/clientes');//ruta para los clientes
-const imagenes = require('./routes/imagenes'); // rutas de las imagenes
 
-//llamar a las rutas de test, eliminar si es necesario
+
+
+//importar rutas
 const test = require('./routes/test');
-const models = require('./config/asociaciones');
+const usuarios = require('./routes/usuarios');
+const clientes = require('./routes/clientes');
 
+//configuraciones
 const app = express();
 const PORT = process.env.PORT || 3002;
 
@@ -20,6 +19,7 @@ app.use(cors({
     origin: ['http://127.0.0.1:5500', 'http://localhost:3005'] //direccion del otro frontend
 }));
 
+
 //Creamos un middleware para manejar el JSON
 app.use(express.json());
 
@@ -27,16 +27,14 @@ app.get('/', (req, res) => {
     res.send('¡Bienvenido!, la aplicación esta funcionando correctamente... ');
 });
 
-//agregamos las rutas
-app.use('/api/usuarios', usuarios);
-app.use('/api/dashboard', dashboard);
-app.use('/api/clientes', clientes);
 
+//ACCESO A LAS RUTAS
 //ruta para testear base de datos
 app.use('/api/test', test);
+app.use('/api/usuarios', usuarios);
+app.use('/api/clientes', clientes);
 
-//probar el sistema de guardado de imagenes
-app.use('/api/imagenes', imagenes);
+
 
 
 //sincronizar los modelos con la base de datos

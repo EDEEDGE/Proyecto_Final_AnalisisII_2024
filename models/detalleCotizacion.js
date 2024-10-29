@@ -11,6 +11,17 @@ const DetalleCotizacion = dbclient.define('DetalleCotizacion', {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
+    descripcion: {
+        type: DataTypes.STRING,
+    },
+    idCotizacion: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    idProducto: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
 });
 
 module.exports = DetalleCotizacion;
