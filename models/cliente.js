@@ -19,6 +19,15 @@ const Cliente = dbclient.define('Cliente', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    DPI: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    fechaIngreso: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
 });
 
 module.exports = Cliente;

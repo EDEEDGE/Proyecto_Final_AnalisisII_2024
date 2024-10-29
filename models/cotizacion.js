@@ -11,6 +11,11 @@ const Cotizacion = dbclient.define('Cotizacion', {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
+    idCliente: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    
 });
 
 module.exports = Cotizacion;
