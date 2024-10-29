@@ -1,23 +1,19 @@
-const express = require('express');
 const {
-    registrarCliente,
-    obtenerClientes,
-    obtenerClientePorID,
-    actualizarClientePorID,
-    eliminarClientePorID,
-    buscarClientePorCorreo,
-} = require('../controllers/clientes');
-
-const verificarToken = require('../middlewares/autenticacion');
-
+    crearCliente, 
+    obtenerClientes, 
+    obtenerClientesPorId,
+    actualizarCliente,
+    eliminarCliente,
+} = require ('../controllers/clientes');
+const express = require('express');
 const rutas = express.Router();
+const autenticarToken = require('../middlewares/autenticacion');
 
-//rutas para los metodos
-rutas.post('/registrar', verificarToken, registrarCliente);
-rutas.get('/obtener', verificarToken, obtenerClientes);
-rutas.get('/obtener/:id', verificarToken, obtenerClientePorID);
-rutas.put('/actualizar/:id', verificarToken, actualizarClientePorID);
-rutas.delete('/eliminar/:id', verificarToken,eliminarClientePorID);
-rutas.get('/obtener/correo/:correoElectronico', verificarToken, buscarClientePorCorreo);
+//rutas
+rutas.post('/crear_nuevo', autenticarToken, crearCliente);
+rutas.get('/obtener_todos', autenticarToken, obtenerClientes);
+rutas.get('/obtener/:id', autenticarToken, obtenerClientesPorId);
+rutas.put('/actualizar/:id', autenticarToken, actualizarCliente);
+rutas.delete('/eliminar/:id', autenticarToken, eliminarCliente);
 
 module.exports = rutas;
