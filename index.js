@@ -9,6 +9,7 @@ const cors = require('cors');//llamar cors para manejar peticiones dsede el fron
 const test = require('./routes/test');
 const usuarios = require('./routes/usuarios');
 const clientes = require('./routes/clientes');
+const productos = require('./routes/productos');
 
 //configuraciones
 const app = express();
@@ -33,6 +34,7 @@ app.get('/', (req, res) => {
 app.use('/api/test', test);
 app.use('/api/usuarios', usuarios);
 app.use('/api/clientes', clientes);
+app.use('/api/productos', productos);
 
 
 
