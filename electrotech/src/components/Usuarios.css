@@ -1,0 +1,382 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Header styles */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #295274; /* Color celeste */
+    padding: 10px 20px;
+}
+
+/* Sidebar styles */
+.sidebar {
+    width: 340px;
+    background-color: #295274; /* Mismo color que el header */
+    padding: 20px;
+}
+
+/* Store image styles */
+.store-image {
+    width: 300px;
+    height: 50px;
+}
+
+/* User info styles */
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.usr-icon {
+    width: 30px;
+    height: 30px;
+    filter: brightness(0) invert(1); /* Invierte el color de los iconos */
+}
+
+.employee-select {
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0); /* Fondo transparente */
+    border: none;
+    color: white;
+}
+
+.container {
+    display: flex;
+    height: calc(100vh - 70px); /* Altura del header */
+}
+
+/* Sidebar button styles */
+.sidebar-button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff; /* Texto en blanco para el panel izquierdo */
+    transition: background-color 0.3s; /* Para efecto del hover */
+    font-weight: 600;
+}
+
+.sidebar-button img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    filter: brightness(0) invert(1); /* Invierte el color de los iconos */
+}
+
+/* Hover effect for sidebar buttons */
+.sidebar-button:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Fondo más claro al pasar el mouse */
+}
+
+.sidebar-button.active {
+    background-color: #2ac3d3;    
+}
+
+/* Main styles */
+.main {
+    flex: 1;
+    background-color: #f8f5f5;
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra para el área principal */
+}
+
+/* Main header adjustments for new sections */
+.main-header {
+    display: flex;  
+    align-items: center;
+    background-color: #ecebeb;
+    padding: 10px;
+    border-radius: 5px;
+    height: 70px;
+    color: #818181;
+}
+
+.main-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    filter: grayscale(100%); /* Convierte el icono a gris */
+    opacity: 0.5;
+}
+
+.panel-title {
+    margin-top: 40px; /* Espacio entre el encabezado gris y el título */
+    margin-left: 50px;
+    font-size: 40px;
+    font-weight: lighter;
+}
+
+/* Styles for the configuration form container */
+.config-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin: 30px 0;
+}
+
+/* Primer search bar estilo expandido */
+.search-container.full-width {
+    display: flex;
+    align-items: center;
+    width: 100%; /* Ocupa todo el ancho */
+}
+
+.search-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    opacity: 0.5; /* Ajusta la opacidad del icono */
+}
+
+.search-container.full-width .search-input {
+    width: 100%; /* Abarca todo el espacio */
+    padding: 15px;
+    border: none; /* Sin borde */
+    background-color: transparent; /* Fondo transparente */
+    font-size: 16px;
+    outline: none; /* Sin borde de enfoque */
+}
+
+.search-container.full-width .search-input::placeholder {
+    color: #888;
+}
+
+/* Línea divisoria debajo del primer search bar */
+.search-container-divider {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+
+/* Estilo para contenedor de búsqueda con ícono dentro del input */
+.search-container.with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.search-container.with-icon .search-label {
+    margin-right: 10px;
+}
+
+
+.search-container.with-icon .search-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding-right: 30px;
+}
+
+.search-container.with-icon .search-icon {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(0.6);
+}
+
+.new-user-button {
+    padding: 1px 40px;
+    background-color: #2ac3d3;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.new-user-button:hover {
+    background-color: #1f9fb1;
+}
+
+/* Styles for the user table */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.user-table th, .user-table td {
+    padding: 10px;
+    border: none;
+    text-align: center;
+}
+
+.user-table th {
+    background-color: #ffecb6; /* Resaltar en amarillo */
+    color: #000; /* Texto negro para el título */
+}
+
+/* Estilo para resaltar las filas alternas */
+.user-table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Color alternativo para filas */
+}
+
+/* Styles for action buttons in the table */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 5px; /* Espacio entre botones */
+}
+
+/* Estilos para los botones de acción */
+.edit-button, .delete-button, .update-button {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 30px;
+}
+
+/* Botones de acción con iconos */
+.edit-button {
+    background-color: #ffcc40; /* Amarillo */
+}
+
+.delete-button {
+    background-color: #f44343; /* Rojo */
+}
+
+.update-button {
+    background-color: #8bfa92; /* Verde */
+}
+
+/* Iconos para los botones de acción */
+.edit-button img, .delete-button img, .update-button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Botones de navegación */
+.pagination {
+    display: flex;
+    justify-content: flex-end; /* Alinea los botones a la derecha */
+    margin-top: 20px;
+}
+
+.pagination-button {
+    background: none; /* Hace los botones planos */
+    color: #2ac3d3; /* Color del texto similar al color principal */
+    border: none; /* Sin borde */
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 10px; /* Espacio entre los botones */
+}
+
+.pagination-button:hover {
+    color: #1f9fb1; /* Cambia el color al pasar el ratón */
+}
+
+/* Overlay del modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Contenido del modal */
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+}
+
+/* Icono del modal */
+.modal-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    filter: brightness(0) invert(0.7);
+}
+
+/* Título del modal */
+.modal-content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Estilo del formulario en el modal */
+.modal-form label {
+    display: block;
+    text-align: left;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.modal-form input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+/* Botones del modal */
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.close-button, .save-button {
+    width: 45%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button {
+    background-color: #f44343; /* Rojo */
+    color: #fff;
+}
+
+.save-button {
+    background-color: #2ac3d3; /* Azul */
+    color: #fff;
+}
+
+.close-button:hover {
+    background-color: #d32f2f;
+}
+
+.save-button:hover {
+    background-color: #1f9fb1;
+}

@@ -1,0 +1,413 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Header styles */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #295274;
+    padding: 10px 20px;
+}
+
+/* Sidebar styles */
+.sidebar {
+    width: 340px;
+    background-color: #295274;
+    padding: 20px;
+}
+
+/* Store image styles */
+.store-image {
+    width: 300px;
+    height: 50px;
+}
+
+/* User info styles */
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.usr-icon {
+    width: 30px;
+    height: 30px;
+    filter: brightness(0) invert(1);
+}
+
+.employee-select {
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+    color: white;
+}
+
+.container {
+    display: flex;
+    height: calc(100vh - 70px);
+}
+
+/* Sidebar button styles */
+.sidebar-button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff;
+    transition: background-color 0.3s;
+    font-weight: 600;
+}
+
+.sidebar-button img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    filter: brightness(0) invert(1);
+}
+
+.sidebar-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-button.active {
+    background-color: #2ac3d3;
+}
+
+/* Main styles */
+.main {
+    flex: 1;
+    background-color: #f8f5f5;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Main header */
+.main-header {
+    display: flex;
+    align-items: center;
+    background-color: #ecebeb;
+    padding: 10px;
+    border-radius: 5px;
+    height: 70px;
+    color: #818181;
+}
+
+.main-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    filter: grayscale(100%);
+    opacity: 0.5;
+}
+
+.panel-title {
+    margin-top: 40px;
+    margin-left: 50px;
+    font-size: 40px;
+    font-weight: lighter;
+}
+
+/* Config container */
+.config-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin: 30px 0;
+}
+
+/* Search bar */
+.search-container.full-width {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.search-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    opacity: 0.5;
+}
+
+.search-container.full-width .search-input {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-container.full-width .search-input::placeholder {
+    color: #888;
+}
+
+.search-container-divider {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+
+.search-container.with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.search-label {
+    margin-right: 10px;
+}
+
+.new-quote-button {
+    padding: 1px 40px;
+    background-color: #2ac3d3;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.new-quote-button:hover {
+    background-color: #1f9fb1;
+}
+
+/* Table for quotes */
+.quote-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.quote-table th, .quote-table td {
+    padding: 10px;
+    border: none;
+    text-align: center;
+}
+
+.quote-table th {
+    background-color: #ffecb6;
+    color: #000;
+}
+
+.quote-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Action buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.edit-button, .delete-button, .update-button {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 30px;
+}
+
+.edit-button {
+    background-color: #ffcc40;
+}
+
+.delete-button {
+    background-color: #f44343;
+}
+
+.update-button {
+    background-color: #8bfa92;
+}
+
+.edit-button img, .delete-button img, .update-button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Pagination buttons */
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.pagination-button {
+    background: none;
+    color: #2ac3d3;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.pagination-button:hover {
+    color: #1f9fb1;
+}
+
+/* Modal overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+}
+
+.modal-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    filter: brightness(0) invert(0.7);
+}
+
+.modal-content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Form in modal */
+.modal-form label {
+    display: block;
+    text-align: left;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.modal-form input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+/* New buttons in modal */
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.close-button, .add-product-button, .print-quote-button {
+    width: 30%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button {
+    background-color: #f44343;
+    color: #fff;
+}
+
+.add-product-button {
+    background-color: #4caf50;
+    color: #fff;
+}
+
+.print-quote-button img {
+    width: 20px;
+    height: 20px;
+}
+
+.print-quote-button {
+    background-color: #2ac3d3;
+    color: #fff;
+}
+
+.close-button:hover {
+    background-color: #d32f2f;
+}
+
+.add-product-button:hover {
+    background-color: #388e3c;
+}
+
+.print-button:hover {
+    background-color: #1f9fb1;
+}
+
+/* Inner table in modal */
+.inner-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.inner-table th, .inner-table td {
+    padding: 10px;
+    text-align: center;
+}
+
+.inner-table th {
+    background-color: #ffecb6;
+    color: #000;
+}
+
+.inner-table td .delete-button {
+    background-color: #f44343;
+    color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Dropdowns */
+.dropdown-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.dropdown-container select {
+    width: 30%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
