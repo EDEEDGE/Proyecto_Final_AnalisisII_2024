@@ -10,6 +10,7 @@ const test = require('./routes/test');
 const usuarios = require('./routes/usuarios');
 const clientes = require('./routes/clientes');
 const productos = require('./routes/productos');
+const cotizaciones = require('./routes/cotizaciones');
 
 //configuraciones
 const app = express();
@@ -35,7 +36,7 @@ app.use('/api/test', test);
 app.use('/api/usuarios', usuarios);
 app.use('/api/clientes', clientes);
 app.use('/api/productos', productos);
-
+app.use('/api/cotizaciones', cotizaciones);
 
 
 
