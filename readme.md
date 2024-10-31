@@ -16,6 +16,7 @@ Una lista de las diferentes tecnologias y logica de trabajo que se implemento
 # HTML 5
 # Base de datos POSTGRESQL en local y SQLServer en Azure DataBase
 # Github como area de trabajo, manejo de versiones, ramas y repositorio
+# Para realizar el envio de las cotizaciones por email se implementara el uso de SendGrid con una api key
 
 DEPENDENCIAS UTILIZADAS
 # npm init -y //para iniciar y crear el archivo package.json
@@ -25,5 +26,6 @@ DEPENDENCIAS UTILIZADAS
 # npm install pg pg-hstore //conctores para base de datos POSTGRES
 # npm install bcryptjs //para encriptar contraseñas y los tokens
 # npm install jsonwebtoken //nos ayudara a crear una logica de login mas segura y compleja
+# npm install @sendgrid/mail //necesario para utilizar la api key de send grid
 
 
