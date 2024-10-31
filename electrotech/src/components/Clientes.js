@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import '../components/Clientes.css';
 
 const Clientes = () => {
     const [showModal, setShowModal] = useState(false);
+    const [clientes, setClientes] = useState([]);
+    const [nuevoCliente, setNuevoCliente] = useState({
+        nombre: '',
+        direccion: '',
+        correoElectronico: '',
+        telefono: '',
+        DPI: '',
+        fechaIngreso: new Date().toISOString().split('T')[0], // Formato YYYY-MM-DD
+    });
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -11,7 +21,62 @@ const Clientes = () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
+        // Reiniciar los campos del nuevo cliente al cerrar el modal
+        setNuevoCliente({
+            nombre: '',
+            direccion: '',
+            correoElectronico: '',
+            telefono: '',
+            DPI: '',
+            fechaIngreso: new Date().toISOString().split('T')[0],
+        });
     };
+
+    // Función para manejar cambios en los inputs del nuevo cliente
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setNuevoCliente({ ...nuevoCliente, [name]: value });
+    };
+
+    // Función para enviar el nuevo cliente
+    const handleSubmit = async (e) => {
+        e.preventDefault(); // Evita la recarga de la página
+        try {
+            const token = localStorage.getItem('token'); // Obtén el token de autenticación
+            await axios.post('http://localhost:3002/api/clientes/crear/nuevo', nuevoCliente, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            // Cierra el modal después de guardar
+            handleCloseModal();
+            // Vuelve a obtener los clientes
+            fetchClientes();
+        } catch (error) {
+            console.error('Error al crear nuevo cliente', error);
+            alert('Error al crear nuevo cliente. Verifica la información e intenta nuevamente.');
+        }
+    };
+
+    // Función para obtener todos los clientes
+    const fetchClientes = async () => {
+        try {
+            const token = localStorage.getItem('token'); // Obtén el token de autenticación
+            const response = await axios.get('http://localhost:3002/api/clientes/obtener/todos', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setClientes(response.data);
+        } catch (error) {
+            console.error('Error al obtener los clientes', error);
+            alert('Error al obtener la lista de clientes.');
+        }
+    };
+
+    useEffect(() => {
+        fetchClientes(); // Obtener clientes al cargar el componente
+    }, []);
 
     return (
         <>
@@ -28,72 +93,66 @@ const Clientes = () => {
             </header>
             <div className="container">
                 <nav className="sidebar">
-                    <Link to ="/ControlPanel">
-                        <button className="sidebar-button" ><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
+                    <Link to="/ControlPanel">
+                        <button className="sidebar-button"><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
                     </Link>
-                    <Link to ="/Cotizaciones">
-                        <button className="sidebar-button" ><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
+                    <Link to="/Cotizaciones">
+                        <button className="sidebar-button"><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
                     </Link>
-                    <Link to ="/Clientes">
-                        <button className="sidebar-button active" ><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
+                    <Link to="/Clientes">
+                        <button className="sidebar-button active"><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
                     </Link>
-                    <Link to ="/Productos">
-                        <button className="sidebar-button" ><img src="../img/productos1.png" alt="Productos" /> Productos</button>
+                    <Link to="/Productos">
+                        <button className="sidebar-button"><img src="../img/productos1.png" alt="Productos" /> Productos</button>
                     </Link>
-                    <Link to ="/Usuarios">
-                        <button className="sidebar-button" ><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
+                    <Link to="/Usuarios">
+                        <button className="sidebar-button"><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
                     </Link>
-                    <Link to ="/Configuracion">
-                        <button className="sidebar-button" ><img src="../img/configuracion.png" alt="Configuraciones" /> Configuracion</button>
+                    <Link to="/Configuracion">
+                        <button className="sidebar-button"><img src="../img/configuracion.png" alt="Configuraciones" /> Configuracion</button>
                     </Link>
                 </nav>
                 <main className="main">
                     <div className="main-header">
                         <img src="../img/usuario.png" alt="Clientes" className="main-icon" /> / Clientes
                     </div>
-                    
                     <h2 className="panel-title">Gestión de Clientes</h2>
                     <div className="config-container">
                         <div className="search-container full-width">
-                            <img src="../img/search.png" alt="Buscar" className="search-icon"></img>
+                            <img src="../img/search.png" alt="Buscar" className="search-icon" />
                             <input type="text" placeholder="Buscar Clientes..." className="search-input" />
                             <button className='new-user-button' onClick={handleOpenModal}>+ Nuevo Cliente</button>
                         </div>
 
-                        <div className="search-container-divider"></div>
-
-                        <div className="search-container with-icon">
-                            <label htmlFor="search-names" className="search-label">Nombre del Cliente:</label>
-                            <input type="text" id="search-names" placeholder="Buscar" className="search-input" />
-                            <img src="../img/search.png" alt="Buscar" className="search-icon" onClick={() => {/* función de búsqueda aquí */}} />
-                        </div>
-
+                        {/* Tabla de clientes */}
                         <table className="user-table">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Fecha alta</th>
-                                    <th>No Documento</th>
                                     <th>Nombre</th>
-                                    <th>Direccion</th>
-                                    <th>Contacto</th>
+                                    <th>Dirección</th>
+                                    <th>Correo Electrónico</th>
+                                    <th>Número de Teléfono</th>
+                                    <th>No. Identificación</th>
+                                    <th>Fecha de Ingreso</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>2024-10-29</td>
-                                    <td>juanp</td>
-                                    <td>juan@example.com</td>
-                                    <td>2024-10-29</td>
-                                    <td>juanp</td>
-                                    <td className="action-buttons">
-                                        <button className="edit-button"><img src="../img/edit.png" alt="Editar" /></button>
-                                        <button className="delete-button"><img src="../img/delete.png" alt="Eliminar" /></button>
-                                        <button className="update-button"><img src="../img/update.png" alt="Actualizar" /></button>
-                                    </td>
-                                </tr>
+                                {clientes.map((cliente) => (
+                                    <tr key={cliente.id}>
+                                        <td>{cliente.id}</td>
+                                        <td>{cliente.nombre}</td>
+                                        <td>{cliente.direccion}</td>
+                                        <td>{cliente.correoElectronico}</td>
+                                        <td>{cliente.telefono}</td>
+                                        <td>{cliente.DPI}</td>
+                                        <td>{new Date(cliente.fechaIngreso).toLocaleDateString()}</td>
+                                        <td className="action-buttons">
+                                            {/* Botones de acción */}
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
 
@@ -102,23 +161,19 @@ const Clientes = () => {
                                 <div className="modal-content">
                                     <img src="../img/add.png" alt="Agregar" className="modal-icon" />
                                     <h2>Agregar Nuevo Cliente</h2>
-                                    <form className="modal-form">
+                                    <form className="modal-form" onSubmit={handleSubmit}>
                                         <label>Nombre del Cliente</label>
-                                        <input type="text" placeholder="Nombre del Cliente" />
-                                        <label>Nombre Comercial</label>
-                                        <input type="text" placeholder="Nombre Comercial" />
-                                        <label>No. de Identificación</label>
-                                        <input type="text" placeholder="No. Identificación" />
-                                        <label>Utilidad</label>
-                                        <input type="email" placeholder="Utilidad" />
+                                        <input type="text" name="nombre" value={nuevoCliente.nombre} onChange={handleChange} placeholder="Nombre del Cliente" required />
                                         <label>Dirección</label>
-                                        <input type="text" placeholder="Dirección" />
+                                        <input type="text" name="direccion" value={nuevoCliente.direccion} onChange={handleChange} placeholder="Dirección" required />
                                         <label>Correo Electrónico</label>
-                                        <input type="email" placeholder="Correo Electrónico" />
-                                        <label>Nombre Contacto</label>
-                                        <input type="text" placeholder="Nombre Contacto" />
+                                        <input type="email" name="correoElectronico" value={nuevoCliente.correoElectronico} onChange={handleChange} placeholder="Correo Electrónico" required />
                                         <label>Número de Teléfono</label>
-                                        <input type="text" placeholder="Número de Teléfono" />
+                                        <input type="text" name="telefono" value={nuevoCliente.telefono} onChange={handleChange} placeholder="Número de Teléfono" required />
+                                        <label>No. de Identificación</label>
+                                        <input type="text" name="DPI" value={nuevoCliente.DPI} onChange={handleChange} placeholder="No. Identificación" required />
+                                        <label>Fecha de Ingreso</label>
+                                        <input type="date" name="fechaIngreso" value={nuevoCliente.fechaIngreso} onChange={handleChange} required />
                                         <div className="modal-buttons">
                                             <button type="button" onClick={handleCloseModal} className="close-button">Cerrar</button>
                                             <button type="submit" className="save-button">Guardar</button>
@@ -127,7 +182,6 @@ const Clientes = () => {
                                 </div>
                             </div>
                         )}
-
                         <div className="pagination">
                             <button className="pagination-button">Anterior</button>
                             <button className="pagination-button">1</button>

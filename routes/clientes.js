@@ -1,3 +1,6 @@
+const express = require('express');
+const rutas = express.Router();
+
 const {
     crearCliente, 
     obtenerClientes, 
@@ -5,8 +8,8 @@ const {
     actualizarCliente,
     eliminarCliente,
 } = require ('../controllers/clientes');
-const express = require('express');
-const rutas = express.Router();
+
+
 const autenticarToken = require('../middlewares/autenticacion');
 
 //rutas

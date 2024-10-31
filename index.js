@@ -4,7 +4,6 @@ const dbclient = require('./config/db');//llamamos al archivo db.js de la conexi
 const cors = require('cors');//llamar cors para manejar peticiones dsede el frontend
 
 
-
 //importar rutas
 const test = require('./routes/test');
 const usuarios = require('./routes/usuarios');
@@ -18,7 +17,7 @@ const PORT = process.env.PORT || 3002;
 
 //habilitar cors para permitir peticiones desde el frontend(localhost3005)
 app.use(cors({
-    origin: ['http://127.0.0.1:5500', 'http://localhost:3005'] //direccion del otro frontend
+    origin: ['http://localhost:3001'] //direccion del otro frontend
 }));
 
 
