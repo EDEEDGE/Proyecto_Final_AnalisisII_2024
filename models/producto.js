@@ -28,6 +28,9 @@ const Producto = dbclient.define('Producto', {
         allowNull: false,
         defaultValue: true,
     },
+    descripcion:{
+        type: DataTypes.STRING,
+    },
 });
 
 module.exports = Producto;
