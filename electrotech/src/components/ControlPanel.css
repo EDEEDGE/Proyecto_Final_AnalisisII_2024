@@ -4,9 +4,16 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+html, body, #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+#root {
+    display: flex; /* o display: grid; dependiendo de tu layout */
+    flex-direction: column; /* para flexbox */
 }
 
 /* Header styles */
@@ -23,6 +30,8 @@ body {
     width: 340px;
     background-color: #295274; /* Mismo color que el header */
     padding: 20px;
+    height: 100%;
+    flex-wrap: wrap;
 }
 
 /* Store image styles */
@@ -56,6 +65,8 @@ body {
 .container {
     display: flex;
     height: calc(100vh - 70px); /* Altura del header */
+    overflow: auto; /* Para permitir desplazamiento si es necesario */
+    flex-direction: row ;
 }
 
 /* Sidebar button styles */
@@ -92,8 +103,10 @@ body {
 
 /* Estios del Main*/
 .main {
+    height: 100%;
     flex: 1;
     background-color: #f8f5f5;
+    flex-wrap: wrap;
 }
 
 .main-header {

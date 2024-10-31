@@ -1,3 +1,4 @@
+/* Estilos globales */
 * {
     margin: 0;
     padding: 0;
@@ -10,123 +11,26 @@ body {
     height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;* {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #2ca0ff; /* Fondo celeste */
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .login-container {
-        display: flex;
-        background-color: white;
-        border-radius: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        width: 800px;
-        height: 500px;
-    }
-    
-    .left-section {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        background-color: white;
-    }
-    
-    .store-image {
-        width: 300px;
-        height: 50px;
-    }
-    
-    .left-section h2 {
-        margin-top: 20px;
-        font-size: 24px;
-        color: #333;
-    }
-    
-    .separator {
-        width: 1px;
-        background-color: #ccc;
-        height: 80%;
-        align-self: center;
-    }
-    
-    .right-section {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-    }
-    
-    .user-icon {
-        width: 100px;
-        height: 100px;
-        margin-bottom: 20px;
-    }
-    
-    .input-group {
-        display: flex;
-        align-items: center;
-        margin-bottom: 15px;
-        width: 80%;
-    }
-    
-    .input-icon {
-        width: 24px;
-        height: 24px;
-        margin-right: 10px;
-    }
-    
-    .input-box {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 16px;
-    }
-    
-    .login-button {
-        width: 80%;
-        padding: 10px;
-        background-color: #007BFF; /* Azul */
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-top: 20px;
-    }
-    
-    .login-button:hover {
-        background-color: #0056b3;
-    }
-    
-    .forgot-password {
-        margin-top: 10px;
-        color: #007BFF;
-        text-decoration: none;
-        font-size: 14px;
-    }
-    
-    .forgot-password:hover {
-        text-decoration: underline;
-    }
-    
+    align-items: center;
+    overflow: auto;
+    padding: 20px;
 }
 
+.page-container {
+    width: 100vw;
+    min-height: 100vh;
+    background-color: #2ca0ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* El resto de tus estilos se mantienen igual */
 .login-container {
     display: flex;
     background-color: white;
@@ -134,8 +38,10 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 800px;
     height: 500px;
+    margin: auto;
 }
 
+/* Sección izquierda */
 .left-section {
     flex: 1;
     display: flex;
@@ -157,6 +63,7 @@ body {
     color: #333;
 }
 
+/* Separador */
 .separator {
     width: 1px;
     background-color: #ccc;
@@ -164,6 +71,7 @@ body {
     align-self: center;
 }
 
+/* Sección derecha */
 .right-section {
     flex: 1;
     display: flex;
@@ -200,6 +108,7 @@ body {
     font-size: 16px;
 }
 
+/* Botón de login */
 .login-button {
     width: 80%;
     padding: 10px;
@@ -216,6 +125,7 @@ body {
     background-color: #0056b3;
 }
 
+/* Enlace de contraseña olvidada */
 .forgot-password {
     margin-top: 10px;
     color: #007BFF;
