@@ -4,6 +4,11 @@ import '../components/Usuarios.css';
 
 const Usuarios = () => {
     const [showModal, setShowModal] = useState(false);
+    const [nombre, setNombre] = useState('');
+    const [credenciales, setCredenciales] = useState('');
+    const [usuarios, setUsuarios] = useState([
+        { id: 4, nombre: 'josue' } // Datos de ejemplo
+    ]);
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -11,6 +16,32 @@ const Usuarios = () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Aquí debes implementar la lógica para enviar el nuevo usuario a tu API
+        // Ejemplo de llamada a la API (ajusta la URL y el método según sea necesario)
+        fetch('http://localhost:3002/api/usuarios/registrar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ nombre, credenciales }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Manejo de la respuesta de la API
+            console.log('Usuario agregado:', data);
+            // Agregar el nuevo usuario a la lista local (actualiza el estado)
+            setUsuarios(prev => [...prev, { id: data.id, nombre }]); // Asumiendo que la API devuelve el nuevo id
+            setNombre('');
+            setCredenciales('');
+            handleCloseModal();
+        })
+        .catch((error) => {
+            console.error('Error al agregar usuario:', error);
+        });
     };
 
     return (
@@ -28,23 +59,20 @@ const Usuarios = () => {
             </header>
             <div className="container">
                 <nav className="sidebar">
-                    <Link to ="/ControlPanel">
-                        <button className="sidebar-button" ><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
+                    <Link to="/ControlPanel">
+                        <button className="sidebar-button"><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
                     </Link>
-                    <Link to ="/Cotizaciones">
-                        <button className="sidebar-button" ><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
+                    <Link to="/Cotizaciones">
+                        <button className="sidebar-button"><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
                     </Link>
-                    <Link to ="/Clientes">
-                        <button className="sidebar-button" ><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
+                    <Link to="/Clientes">
+                        <button className="sidebar-button"><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
                     </Link>
-                    <Link to ="/Productos">
-                        <button className="sidebar-button" ><img src="../img/productos1.png" alt="Productos" /> Productos</button>
+                    <Link to="/Productos">
+                        <button className="sidebar-button"><img src="../img/productos1.png" alt="Productos" /> Productos</button>
                     </Link>
-                    <Link to ="/Usuarios">
-                        <button className="sidebar-button active" ><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
-                    </Link>
-                    <Link to ="/Configuracion">
-                        <button className="sidebar-button" ><img src="../img/configuracion.png" alt="Configuraciones" /> Configuracion</button>
+                    <Link to="/Usuarios">
+                        <button className="sidebar-button active"><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
                     </Link>
                 </nav>
                 <main className="main">
@@ -60,38 +88,23 @@ const Usuarios = () => {
                             <button className='new-user-button' onClick={handleOpenModal}>+ Nuevo Usuario</button>
                         </div>
 
-                        <div className="search-container-divider"></div>
-
-                        <div className="search-container with-icon">
-                            <label htmlFor="search-names" className="search-label">Nombres:</label>
-                            <input type="text" id="search-names" placeholder="Buscar" className="search-input" />
-                            <img src="../img/search.png" alt="Buscar" className="search-icon" onClick={() => {/* función de búsqueda aquí */}} />
-                        </div>
-
                         <table className="user-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Nombres</th>
-                                    <th>Usuario</th>
-                                    <th>Email</th>
-                                    <th>Agregado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Juan Pérez</td>
-                                    <td>juanp</td>
-                                    <td>juan@example.com</td>
-                                    <td>2024-10-29</td>
-                                    <td className="action-buttons">
-                                        <button className="edit-button"><img src="../img/edit.png" alt="Editar" /></button>
-                                        <button className="delete-button"><img src="../img/delete.png" alt="Eliminar" /></button>
-                                        <button className="update-button"><img src="../img/update.png" alt="Actualizar" /></button>
-                                    </td>
-                                </tr>
+                                {usuarios.map(usuario => (
+                                    <tr key={usuario.id}>
+                                        <td>{usuario.nombre}</td>
+                                        <td className="action-buttons">
+                                            <button className="edit-button"><img src="../img/edit.png" alt="Editar" /></button>
+                                            <button className="delete-button"><img src="../img/delete.png" alt="Eliminar" /></button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
 
@@ -100,19 +113,11 @@ const Usuarios = () => {
                                 <div className="modal-content">
                                     <img src="../img/add.png" alt="Agregar" className="modal-icon" />
                                     <h2>Agregar Nuevo Usuario</h2>
-                                    <form className="modal-form">
-                                        <label>Nombres</label>
-                                        <input type="text" placeholder="Nombres" />
-                                        <label>Apellidos</label>
-                                        <input type="text" placeholder="Apellidos" />
-                                        <label>Usuario</label>
-                                        <input type="text" placeholder="Usuario" />
-                                        <label>Email</label>
-                                        <input type="email" placeholder="Email" />
-                                        <label>Contraseña</label>
-                                        <input type="password" placeholder="Contraseña" />
-                                        <label>Confirmar Contraseña</label>
-                                        <input type="password" placeholder="Confirmar Contraseña" />
+                                    <form className="modal-form" onSubmit={handleSubmit}>
+                                        <label>Nombre</label>
+                                        <input type="text" value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre" required />
+                                        <label>Credenciales</label>
+                                        <input type="password" value={credenciales} onChange={e => setCredenciales(e.target.value)} placeholder="Credenciales" required />
                                         <div className="modal-buttons">
                                             <button type="button" onClick={handleCloseModal} className="close-button">Cerrar</button>
                                             <button type="submit" className="save-button">Guardar</button>

@@ -43,9 +43,6 @@ const Cotizaciones = () => {
                     <Link to ="/Usuarios">
                         <button className="sidebar-button" ><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
                     </Link>
-                    <Link to ="/Configuracion">
-                        <button className="sidebar-button" ><img src="../img/configuracion.png" alt="Configuraciones" /> Configuracion</button>
-                    </Link>
                 </nav>
                 <main className="main">
                     <div className="main-header">
