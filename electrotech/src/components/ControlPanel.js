@@ -1,30 +1,41 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../components/ControlPanel.css';
 
 const ControlPanel = () => {
     return (
         <>
             <header className="header">
-                <img src="../img/electrotech_color.png" alt="Tienda" className="store-image" />
-                <div className="user-info">
-                    <img src="../img/usuario.png" alt="Usuario" className="usr-icon" />
-                    <select id="empleado" className="employee-select">
-                        <option value="empleado1">Empleado 1</option>
-                        <option value="empleado2">Empleado 2</option>
-                        <option value="empleado3">Empleado 3</option>
-                        <option value="cerrar-sesion">Cerrar Sesión</option>
-                    </select>
-                </div>
-            </header>
-            <div className="container">
+            <img src="../img/electrotech_color.png" alt="Tienda" className="store-image" />
+            <div className="user-info">
+                <img src="../img/usuario.png" alt="Usuario" className="usr-icon" />
+                <select id="empleado" className="employee-select">
+                    <option value="empleado1">Empleado 1</option>
+                    <option value="empleado2">Empleado 2</option>
+                    <option value="empleado3">Empleado 3</option>
+                    <option value="cerrar-sesion">Cerrar Sesión</option>
+                </select>
+            </div>
+            </header><div className="container">
                 <nav className="sidebar">
-                    <button className="sidebar-button active"><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
-                    <button className="sidebar-button"><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
-                    <button className="sidebar-button"><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
-                    <button className="sidebar-button"><img src="../img/productos1.png" alt="Productos" /> Productos</button>
-                    <button className="sidebar-button"><img src="../img/fabricantes.png" alt="Fabricantes" /> Fabricantes</button>
-                    <button className="sidebar-button"><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
-                    <button className="sidebar-button"><img src="../img/configuracion.png" alt="Configuraciones" /> Configuracion</button>
+                    <Link to ="/ControlPanel">
+                        <button className="sidebar-button active" ><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
+                    </Link>
+                    <Link to ="/Cotizaciones">
+                        <button className="sidebar-button" ><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
+                    </Link>
+                    <Link to ="/Clientes">
+                        <button className="sidebar-button" ><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
+                    </Link>
+                    <Link to ="/Productos">
+                        <button className="sidebar-button" ><img src="../img/productos1.png" alt="Productos" /> Productos</button>
+                    </Link>
+                    <Link to ="/Usuarios">
+                        <button className="sidebar-button" ><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
+                    </Link>
+                    <Link to ="/Configuracion">
+                        <button className="sidebar-button" ><img src="../img/configuracion.png" alt="Configuraciones" /> Configuracion</button>
+                    </Link>
                 </nav>
                 <main className="main">
                     <div className="main-header">
