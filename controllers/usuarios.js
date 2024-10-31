@@ -76,10 +76,20 @@ const obtenerPerfil = async (req, res) => {
     }
 };
 
+const obtenerUsuarios = async (req, res) => {
+    try {
+        const usuarios = await Usuario.findAll({ attributes: ['id', 'nombre'] });
+        res.status(200).json(usuarios);
+    } catch (error) {
+        console.error('Error al obtener usuarios...', error);
+        res.status(500).json({ mensaje: 'Error en el servidor...' });
+    }
+};
 
 //exportamos los metodos 
 module.exports = {
     registrarUsuario, 
     login,
     obtenerPerfil,
+    obtenerUsuarios,
 };

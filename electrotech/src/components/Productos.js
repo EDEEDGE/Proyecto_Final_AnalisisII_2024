@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../components/Productos.css';
 
 const Productos = () => {
     const [showModal, setShowModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+    const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
     const [productos, setProductos] = useState([]);
     const [nuevoProducto, setNuevoProducto] = useState({
         nombre: '',
@@ -13,8 +16,40 @@ const Productos = () => {
         codigo: '',
         modelo: '',
         fabricante: '',
-        estado: true, // Asignamos un estado por defecto
+        estado: true,
     });
+    const [productoAEditar, setProductoAEditar] = useState(null);
+    const [productoAEliminar, setProductoAEliminar] = useState(null);
+    const [userName, setUserName] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const storedUserName = localStorage.getItem('userName');
+        setUserName(storedUserName || 'Usuario');
+        fetchProductos();
+    }, []);
+
+    const handleOpenLogoutConfirmModal = () => {
+        setShowLogoutConfirmModal(true);
+    };
+
+    const handleCloseLogoutConfirmModal = () => {
+        setShowLogoutConfirmModal(false);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userName');
+        navigate('/login');
+    };
+
+    const handleSelectChange = (e) => {
+        const selectedValue = e.target.value;
+        if (selectedValue === 'logout') {
+            handleOpenLogoutConfirmModal();
+            e.target.value = userName; // Restablecer el valor del select
+        }
+    };
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -22,7 +57,6 @@ const Productos = () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
-        // Reiniciar los campos del nuevo producto al cerrar el modal
         setNuevoProducto({
             nombre: '',
             descripcion: '',
@@ -34,25 +68,45 @@ const Productos = () => {
         });
     };
 
-    // Función para manejar cambios en los inputs del nuevo producto
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setNuevoProducto({ ...nuevoProducto, [name]: value });
+    const handleOpenEditModal = (producto) => {
+        setProductoAEditar(producto);
+        setShowEditModal(true);
     };
 
-    // Función para enviar el nuevo producto
+    const handleCloseEditModal = () => {
+        setShowEditModal(false);
+        setProductoAEditar(null);
+    };
+
+    const handleOpenDeleteConfirmModal = (producto) => {
+        setProductoAEliminar(producto);
+        setShowDeleteConfirmModal(true);
+    };
+
+    const handleCloseDeleteConfirmModal = () => {
+        setShowDeleteConfirmModal(false);
+        setProductoAEliminar(null);
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        if (productoAEditar) {
+            setProductoAEditar({ ...productoAEditar, [name]: value });
+        } else {
+            setNuevoProducto({ ...nuevoProducto, [name]: value });
+        }
+    };
+
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Evita la recarga de la página
+        e.preventDefault();
         try {
-            const token = localStorage.getItem('token'); // Obtén el token de autenticación
+            const token = localStorage.getItem('token');
             await axios.post('http://localhost:3002/api/productos/crear/nuevo', nuevoProducto, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            // Cierra el modal después de guardar
             handleCloseModal();
-            // Vuelve a obtener los productos
             fetchProductos();
         } catch (error) {
             console.error('Error al crear nuevo producto', error);
@@ -60,10 +114,42 @@ const Productos = () => {
         }
     };
 
-    // Función para obtener todos los productos
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem('token');
+            await axios.put(`http://localhost:3002/api/productos/actualizar/${productoAEditar.id}`, productoAEditar, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            handleCloseEditModal();
+            fetchProductos();
+        } catch (error) {
+            console.error('Error al editar el producto', error);
+            alert('Error al editar el producto. Verifica la información e intenta nuevamente.');
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`http://localhost:3002/api/productos/eliminar/${productoAEliminar.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            handleCloseDeleteConfirmModal();
+            fetchProductos();
+        } catch (error) {
+            console.error('Error al eliminar el producto', error);
+            alert('Error al eliminar el producto.');
+        }
+    };
+
     const fetchProductos = async () => {
         try {
-            const token = localStorage.getItem('token'); // Obtén el token de autenticación
+            const token = localStorage.getItem('token');
             const response = await axios.get('http://localhost:3002/api/productos/obtener/todos', {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -76,20 +162,15 @@ const Productos = () => {
         }
     };
 
-    useEffect(() => {
-        fetchProductos(); // Obtener productos al cargar el componente
-    }, []);
-
     return (
         <>
             <header className="header">
                 <img src="../img/electrotech_color.png" alt="Tienda" className="store-image" />
                 <div className="user-info">
                     <img src="../img/usuario.png" alt="Usuario" className="usr-icon" />
-                    <select id="empleado" className="employee-select">
-                        <option value="empleado1">Empleado 1</option>
-                        <option value="empleado2">Empleado 2</option>
-                        <option value="cerrar-sesion">Cerrar Sesión</option>
+                    <select id="empleado" className="employee-select" onChange={handleSelectChange} value={userName}>
+                        <option value={userName}>{userName}</option>
+                        <option value="logout">Cerrar Sesión</option>
                     </select>
                 </div>
             </header>
@@ -150,8 +231,12 @@ const Productos = () => {
                                         <td>{producto.estado ? 'Disponible' : 'No Disponible'}</td>
                                         <td>{producto.precio}</td>
                                         <td className="action-buttons">
-                                            <button className="edit-button"><img src="../img/edit.png" alt="Editar" /></button>
-                                            <button className="delete-button"><img src="../img/delete.png" alt="Eliminar" /></button>
+                                            <button className="edit-button" onClick={() => handleOpenEditModal(producto)}>
+                                                <img src="../img/edit.png" alt="Editar" />
+                                            </button>
+                                            <button className="delete-button" onClick={() => handleOpenDeleteConfirmModal(producto)}>
+                                                <img src="../img/delete.png" alt="Eliminar" />
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
@@ -186,6 +271,65 @@ const Productos = () => {
                                             <button type="submit" className="save-button">Guardar</button>
                                         </div>
                                     </form>
+                                </div>
+                            </div>
+                        )}
+
+                        {showEditModal && productoAEditar && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <img src="../img/edit.png" alt="Editar" className="modal-icon" />
+                                    <h2>Editar Producto</h2>
+                                    <form className="modal-form" onSubmit={handleEditSubmit}>
+                                        <label>Nombre</label>
+                                        <input type="text" name="nombre" value={productoAEditar.nombre} onChange={handleChange} required />
+                                        <label>Descripción</label>
+                                        <input type="text" name="descripcion" value={productoAEditar.descripcion} onChange={handleChange} required />
+                                        <label>Código</label>
+                                        <input type="text" name="codigo" value={productoAEditar.codigo} onChange={handleChange} required />
+                                        <label>Modelo</label>
+                                        <input type="text" name="modelo" value={productoAEditar.modelo} onChange={handleChange} required />
+                                        <label>Fabricante</label>
+                                        <input type="text" name="fabricante" value={productoAEditar.fabricante} onChange={handleChange} required />
+                                        <label>Estado</label>
+                                        <select name="estado" value={productoAEditar.estado} onChange={handleChange} required>
+                                            <option value={true}>Disponible</option>
+                                            <option value={false}>No Disponible</option>
+                                        </select>
+                                        <label>Precio</label>
+                                        <input type="number" name="precio" value={productoAEditar.precio} onChange={handleChange} required />
+                                        <div className="modal-buttons">
+                                            <button type="button" onClick={handleCloseEditModal} className="close-button">Cerrar</button>
+                                            <button type="submit" className="save-button">Actualizar Cambios</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
+
+                        {showDeleteConfirmModal && productoAEliminar && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <h2>Eliminar Producto</h2>
+                                    <p>¿Estás seguro de que deseas eliminar el producto "{productoAEliminar.nombre}"?</p>
+                                    <div className="modal-buttons">
+                                        <button type="button" onClick={handleCloseDeleteConfirmModal} className="close-button">Cancelar</button>
+                                        <button type="button" onClick={handleDelete} className="delete-button">Si</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Modal de Confirmación de Cierre de Sesión */}
+                        {showLogoutConfirmModal && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <h2>Confirmar Cierre de Sesión</h2>
+                                    <p>¿Estás seguro de que deseas cerrar sesión?</p>
+                                    <div className="modal-buttons">
+                                        <button type="button" onClick={handleCloseLogoutConfirmModal} className="close-button">Cancelar</button>
+                                        <button onClick={handleLogout} className="delete-button">Sí</button>
+                                    </div>
                                 </div>
                             </div>
                         )}
