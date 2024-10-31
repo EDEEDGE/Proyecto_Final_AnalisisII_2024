@@ -1,0 +1,186 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Header styles */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #295274; /* Color celeste */
+    padding: 10px 20px;
+}
+
+/* Sidebar styles */
+.sidebar {
+    width: 340px;
+    background-color: #295274; /* Mismo color que el header */
+    padding: 20px;
+}
+
+/* Store image styles */
+.store-image {
+    width: 300px;
+    height: 50px;
+}
+
+/* User info styles */
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.usr-icon {
+    width: 30px;
+    height: 30px;
+    filter: brightness(0) invert(1); /* Invierte el color de los iconos */
+}
+
+.employee-select {
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0); /* Fondo transparente */
+    border: none;
+    color: white;
+}
+
+.container {
+    display: flex;
+    height: calc(100vh - 70px); /* Altura del header */
+}
+
+/* Sidebar button styles */
+.sidebar-button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff; /* Texto en blanco para el panel izquierdo */
+    transition: background-color 0.3s; /* Para efecto del hover */
+    font-weight: 600;
+}
+
+.sidebar-button img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    filter: brightness(0) invert(1); /* Invierte el color de los iconos */
+}
+
+/* Hover effect for sidebar buttons */
+.sidebar-button:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Fondo más claro al pasar el mouse */
+}
+
+.sidebar-button.active {
+    background-color: #2ac3d3;    
+}
+
+/* Main styles */
+.main {
+    flex: 1;
+    background-color: #f8f5f5;
+}
+
+/* Main header adjustments for new sections */
+.main-header {
+    display: flex;
+    align-items: center;
+    background-color: #ecebeb;
+    padding: 10px;
+    border-radius: 5px;
+    height: 70px;
+    color: #818181;
+}
+
+.main-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    filter: grayscale(100%); /* Convierte el icono a gris */
+    opacity: 0.5;
+}
+
+.panel-title {
+    margin-top: 40px; /* Espacio entre el encabezado gris y el título */
+    margin-left: 50px;
+    font-size: 40px;
+    font-weight: lighter;
+}
+
+/* ... código anterior ... */
+
+/* Styles for the configuration form container */
+.config-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin: 30px 50px;
+}
+
+/* Styles for the Configuración form with two columns */
+.config-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas de igual ancho */
+    gap: 20px; /* Espacio entre las columnas */
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Styles for labels and inputs */
+.config-form label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #494949;
+    margin-bottom: 5px;
+}
+
+.config-form input[type="text"],
+.config-form textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Comentarios y botón abarcan ambas columnas */
+.config-form textarea {
+    grid-column: span 2; /* Abarca ambas columnas */
+    resize: vertical;
+    height: 100px;
+}
+
+.save-button {
+    grid-column: span 2; /* Botón abarca ambas columnas */
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #2ac3d3;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.save-button:hover {
+    background-color: #1f9fb1;
+}
