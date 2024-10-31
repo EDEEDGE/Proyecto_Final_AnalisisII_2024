@@ -108,9 +108,6 @@ const Clientes = () => {
                     <Link to="/Usuarios">
                         <button className="sidebar-button"><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
                     </Link>
-                    <Link to="/Configuracion">
-                        <button className="sidebar-button"><img src="../img/configuracion.png" alt="Configuraciones" /> Configuracion</button>
-                    </Link>
                 </nav>
                 <main className="main">
                     <div className="main-header">
@@ -149,7 +146,8 @@ const Clientes = () => {
                                         <td>{cliente.DPI}</td>
                                         <td>{new Date(cliente.fechaIngreso).toLocaleDateString()}</td>
                                         <td className="action-buttons">
-                                            {/* Botones de acción */}
+                                            <button className="edit-button"><img src="../img/edit.png" alt="Editar" /></button>
+                                            <button className="delete-button"><img src="../img/delete.png" alt="Eliminar" /></button>
                                         </td>
                                     </tr>
                                 ))}
