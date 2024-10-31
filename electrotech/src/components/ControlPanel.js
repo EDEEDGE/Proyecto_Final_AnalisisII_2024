@@ -1,23 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import '../components/ControlPanel.css';
 
 const ControlPanel = () => {
-    const [cantidadClientes, setCantidadClientes] = useState(0);
-    const [cantidadCotizaciones, setCantidadCotizaciones] = useState(0);
-    const [cantidadProductos, setCantidadProductos] = useState(0);
+    const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
+    const [userName, setUserName] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Obtener el conteo de clientes, cotizaciones y productos
-        fetch('http://localhost:3002/api/contadores')
-            .then(response => response.json())
-            .then(data => {
-                setCantidadClientes(data.clientes);
-                setCantidadCotizaciones(data.cotizaciones);
-                setCantidadProductos(data.productos);
-            })
-            .catch(error => console.error('Error al obtener los contadores:', error));
+        const storedUserName = localStorage.getItem('userName');
+        setUserName(storedUserName || 'Usuario');
     }, []);
+
+    const handleOpenLogoutConfirmModal = () => {
+        setShowLogoutConfirmModal(true);
+    };
+
+    const handleCloseLogoutConfirmModal = () => {
+        setShowLogoutConfirmModal(false);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userName');
+        navigate('/login');
+    };
+
+    const handleSelectChange = (e) => {
+        const selectedValue = e.target.value;
+        if (selectedValue === 'cerrar-sesion') {
+            handleOpenLogoutConfirmModal();
+            e.target.value = userName; // Restablecer el valor del select
+        }
+    };
 
     return (
         <>
@@ -25,10 +40,8 @@ const ControlPanel = () => {
                 <img src="../img/electrotech_color.png" alt="Tienda" className="store-image" />
                 <div className="user-info">
                     <img src="../img/usuario.png" alt="Usuario" className="usr-icon" />
-                    <select id="empleado" className="employee-select">
-                        <option value="empleado1">Empleado 1</option>
-                        <option value="empleado2">Empleado 2</option>
-                        <option value="empleado3">Empleado 3</option>
+                    <select id="empleado" className="employee-select" onChange={handleSelectChange} value={userName}>
+                        <option value={userName}>{userName}</option>
                         <option value="cerrar-sesion">Cerrar Sesión</option>
                     </select>
                 </div>
@@ -63,7 +76,7 @@ const ControlPanel = () => {
                             </div>
                             <div className="card-info" style={{ backgroundColor: '#ffffff' }}>
                                 <h3>Cotizaciones</h3>
-                                <span className="number">{cantidadCotizaciones}</span>
+                                <span className="number">25</span>
                             </div>
                         </div>
                         <div className="card">
@@ -72,7 +85,7 @@ const ControlPanel = () => {
                             </div>
                             <div className="card-info" style={{ backgroundColor: '#ffffff' }}>
                                 <h3>Productos</h3>
-                                <span className="number">{cantidadProductos}</span>
+                                <span className="number">150</span>
                             </div>
                         </div>
                         <div className="card">
@@ -81,10 +94,24 @@ const ControlPanel = () => {
                             </div>
                             <div className="card-info" style={{ backgroundColor: '#ffffff' }}>
                                 <h3>Clientes</h3>
-                                <span className="number">{cantidadClientes}</span>
+                                <span className="number">75</span>
                             </div>
                         </div>
                     </div>
+
+                    {/* Modal de Confirmación de Cierre de Sesión */}
+                    {showLogoutConfirmModal && (
+                        <div className="modal-overlay">
+                            <div className="modal-content">
+                                <h2>Confirmar Cierre de Sesión</h2>
+                                <p>¿Estás seguro de que deseas cerrar sesión?</p>
+                                <div className="modal-buttons">
+                                    <button type="button" onClick={handleCloseLogoutConfirmModal} className="close-button">Cancelar</button>
+                                    <button onClick={handleLogout} className="delete-button">Sí</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </main>
             </div>
         </>

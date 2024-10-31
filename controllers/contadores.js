@@ -14,6 +14,6 @@ const obtenerContadores = async (req, res) => {
         console.error('Error al obtener contadores...', error);
         res.status(500).json({ mensaje: 'Error en el servidor...' });
     }
-};
+};  
 
 module.exports = { obtenerContadores };
