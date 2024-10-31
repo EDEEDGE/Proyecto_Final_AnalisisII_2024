@@ -1,9 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import '../components/Productos.css';
 
 const Productos = () => {
     const [showModal, setShowModal] = useState(false);
+    const [productos, setProductos] = useState([]);
+    const [nuevoProducto, setNuevoProducto] = useState({
+        nombre: '',
+        descripcion: '',
+        precio: '',
+        codigo: '',
+        modelo: '',
+        fabricante: '',
+        estado: true, // Asignamos un estado por defecto
+    });
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -11,7 +22,63 @@ const Productos = () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
+        // Reiniciar los campos del nuevo producto al cerrar el modal
+        setNuevoProducto({
+            nombre: '',
+            descripcion: '',
+            precio: '',
+            codigo: '',
+            modelo: '',
+            fabricante: '',
+            estado: true,
+        });
     };
+
+    // Función para manejar cambios en los inputs del nuevo producto
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setNuevoProducto({ ...nuevoProducto, [name]: value });
+    };
+
+    // Función para enviar el nuevo producto
+    const handleSubmit = async (e) => {
+        e.preventDefault(); // Evita la recarga de la página
+        try {
+            const token = localStorage.getItem('token'); // Obtén el token de autenticación
+            await axios.post('http://localhost:3002/api/productos/crear/nuevo', nuevoProducto, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            // Cierra el modal después de guardar
+            handleCloseModal();
+            // Vuelve a obtener los productos
+            fetchProductos();
+        } catch (error) {
+            console.error('Error al crear nuevo producto', error);
+            alert('Error al crear nuevo producto. Verifica la información e intenta nuevamente.');
+        }
+    };
+
+    // Función para obtener todos los productos
+    const fetchProductos = async () => {
+        try {
+            const token = localStorage.getItem('token'); // Obtén el token de autenticación
+            const response = await axios.get('http://localhost:3002/api/productos/obtener/todos', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setProductos(response.data);
+        } catch (error) {
+            console.error('Error al obtener los productos', error);
+            alert('Error al obtener la lista de productos.');
+        }
+    };
+
+    useEffect(() => {
+        fetchProductos(); // Obtener productos al cargar el componente
+    }, []);
 
     return (
         <>
@@ -28,23 +95,20 @@ const Productos = () => {
             </header>
             <div className="container">
                 <nav className="sidebar">
-                    <Link to ="/ControlPanel">
-                        <button className="sidebar-button" ><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
+                    <Link to="/ControlPanel">
+                        <button className="sidebar-button"><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
                     </Link>
-                    <Link to ="/Cotizaciones">
-                        <button className="sidebar-button" ><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
+                    <Link to="/Cotizaciones">
+                        <button className="sidebar-button"><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
                     </Link>
-                    <Link to ="/Clientes">
-                        <button className="sidebar-button" ><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
+                    <Link to="/Clientes">
+                        <button className="sidebar-button"><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
                     </Link>
-                    <Link to ="/Productos">
-                        <button className="sidebar-button active" ><img src="../img/productos1.png" alt="Productos" /> Productos</button>
+                    <Link to="/Productos">
+                        <button className="sidebar-button active"><img src="../img/productos1.png" alt="Productos" /> Productos</button>
                     </Link>
-                    <Link to ="/Usuarios">
-                        <button className="sidebar-button" ><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
-                    </Link>
-                    <Link to ="/Configuracion">
-                        <button className="sidebar-button" ><img src="../img/configuracion.png" alt="Configuraciones" /> Configuracion</button>
+                    <Link to="/Usuarios">
+                        <button className="sidebar-button"><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
                     </Link>
                 </nav>
                 <main className="main">
@@ -55,49 +119,42 @@ const Productos = () => {
                     <h2 className="panel-title">Gestión de Productos</h2>
                     <div className="config-container">
                         <div className="search-container full-width">
-                            <img src="../img/search.png" alt="Buscar" className="search-icon"></img>
-                            <input type="text" placeholder="Buscar usuario..." className="search-input" />
+                            <img src="../img/search.png" alt="Buscar" className="search-icon" />
+                            <input type="text" placeholder="Buscar producto..." className="search-input" />
                             <button className='new-user-button' onClick={handleOpenModal}>+ Nuevo Producto</button>
-                        </div>
-
-                        <div className="search-container-divider"></div>
-
-                        <div className="search-container with-icon">
-                            <label htmlFor="search-names" className="search-label">Código o Nombre del Producto:</label>
-                            <input type="text" id="search-names" placeholder="Buscar" className="search-input" />
-                            <img src="../img/search.png" alt="Buscar" className="search-icon" onClick={() => {/* función de búsqueda aquí */}} />
                         </div>
 
                         <table className="user-table">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Codigo</th>
+                                    <th>Código</th>
                                     <th>Modelo</th>
-                                    <th>Producto</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
                                     <th>Fabricante</th>
                                     <th>Estado</th>
-                                    <th>Agregado</th>
                                     <th>Precio</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Juan Pérez</td>
-                                    <td>juanp</td>
-                                    <td>juan@example.com</td>
-                                    <td>2024-10-29</td>
-                                    <td>juanp</td>
-                                    <td>juan@example.com</td>
-                                    <td>1029</td>
-                                    <td className="action-buttons">
-                                        <button className="edit-button"><img src="../img/edit.png" alt="Editar" /></button>
-                                        <button className="delete-button"><img src="../img/delete.png" alt="Eliminar" /></button>
-                                        <button className="update-button"><img src="../img/update.png" alt="Actualizar" /></button>
-                                    </td>
-                                </tr>
+                                {productos.map((producto) => (
+                                    <tr key={producto.id}>
+                                        <td>{producto.id}</td>
+                                        <td>{producto.codigo}</td>
+                                        <td>{producto.modelo}</td>
+                                        <td>{producto.nombre}</td>
+                                        <td>{producto.descripcion}</td>
+                                        <td>{producto.fabricante}</td>
+                                        <td>{producto.estado ? 'Disponible' : 'No Disponible'}</td>
+                                        <td>{producto.precio}</td>
+                                        <td className="action-buttons">
+                                            <button className="edit-button"><img src="../img/edit.png" alt="Editar" /></button>
+                                            <button className="delete-button"><img src="../img/delete.png" alt="Eliminar" /></button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
 
@@ -106,19 +163,24 @@ const Productos = () => {
                                 <div className="modal-content">
                                     <img src="../img/add.png" alt="Agregar" className="modal-icon" />
                                     <h2>Agregar Nuevo Producto</h2>
-                                    <form className="modal-form">
-                                        <label>Código</label>
-                                        <input type="text" placeholder="Código" />
-                                        <label>Modelo</label>
-                                        <input type="text" placeholder="Modelo" />
+                                    <form className="modal-form" onSubmit={handleSubmit}>
                                         <label>Nombre</label>
-                                        <input type="text" placeholder="Nombre" />
+                                        <input type="text" name="nombre" value={nuevoProducto.nombre} onChange={handleChange} placeholder="Nombre del Producto" required />
+                                        <label>Descripción</label>
+                                        <input type="text" name="descripcion" value={nuevoProducto.descripcion} onChange={handleChange} placeholder="Descripción" required />
+                                        <label>Código</label>
+                                        <input type="text" name="codigo" value={nuevoProducto.codigo} onChange={handleChange} placeholder="Código" required />
+                                        <label>Modelo</label>
+                                        <input type="text" name="modelo" value={nuevoProducto.modelo} onChange={handleChange} placeholder="Modelo" required />
                                         <label>Fabricante</label>
-                                        <input type="email" placeholder="Fabricante" />
+                                        <input type="text" name="fabricante" value={nuevoProducto.fabricante} onChange={handleChange} placeholder="Fabricante" required />
                                         <label>Estado</label>
-                                        <input type="password" placeholder="Estado" />
+                                        <select name="estado" value={nuevoProducto.estado} onChange={handleChange} required>
+                                            <option value={true}>Disponible</option>
+                                            <option value={false}>No Disponible</option>
+                                        </select>
                                         <label>Precio</label>
-                                        <input type="password" placeholder="Precio" />
+                                        <input type="number" name="precio" value={nuevoProducto.precio} onChange={handleChange} placeholder="Precio" required />
                                         <div className="modal-buttons">
                                             <button type="button" onClick={handleCloseModal} className="close-button">Cerrar</button>
                                             <button type="submit" className="save-button">Guardar</button>

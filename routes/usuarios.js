@@ -4,6 +4,7 @@ const {
     registrarUsuario, 
     login,
     obtenerPerfil,
+    obtenerUsuarios,
 } = require('../controllers/usuarios');
 const verificarToken = require('../middlewares/autenticacion');
 const autenticarToken = require('../middlewares/autenticacion');
