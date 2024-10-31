@@ -1,16 +1,143 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link,useNavigate } from 'react-router-dom';
 import '../components/Cotizaciones.css';
 
 const Cotizaciones = () => {
     const [showModal, setShowModal] = useState(false);
+    const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
+    const [cotizaciones, setCotizaciones] = useState([]);
+    const [nuevoCliente, setNuevoCliente] = useState('');
+    const [productos, setProductos] = useState([{ idProducto: '', cantidad: '', descripcion: '', subtotal: 0 }]);
+    const [idCotizacion, setIdCotizacion] = useState(null);
+    const [userName, setUserName] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const navigate = useNavigate();
+
+    const fetchCotizaciones = async () => {
+        try {
+            const response = await fetch('http://localhost:3002/api/cotizaciones/obtener/todo', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            const data = await response.json();
+
+            if (Array.isArray(data)) {
+                setCotizaciones(data);
+            } else {
+                console.error("La respuesta de la API no es un array:", data);
+                setCotizaciones([]);
+            }
+        } catch (error) {
+            console.error("Error al obtener cotizaciones:", error);
+            setCotizaciones([]);
+        }
+    };
+
+    useEffect(() => {
+        const storedUserName = localStorage.getItem('userName');
+        setUserName(storedUserName || 'Usuario');
+        fetchCotizaciones();
+    }, []);
+
+    const handleOpenLogoutConfirmModal = () => {
+        setShowLogoutConfirmModal(true);
+    };
+
+    const handleCloseLogoutConfirmModal = () => {
+        setShowLogoutConfirmModal(false);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userName');
+        navigate('/login');
+    };
+
+    const handleSelectChange = (e) => {
+        const selectedValue = e.target.value;
+        if (selectedValue === 'logout') {
+            handleOpenLogoutConfirmModal();
+            e.target.value = userName; // Restablecer el valor del select
+        }
+    };
 
     const handleOpenModal = () => {
         setShowModal(true);
+        setIdCotizacion(Date.now()); // Genera un nuevo ID para la cotización al abrir el modal
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
+        setNuevoCliente('');
+        setProductos([{ idProducto: '', cantidad: '', descripcion: '', subtotal: 0 }]);
+    };
+
+    const handleAgregarProducto = () => {
+        const nuevoProducto = { idProducto: '', cantidad: '', descripcion: '', subtotal: 0 };
+        setProductos([...productos, nuevoProducto]);
+    };
+
+    const handleChangeProducto = (index, field, value) => {
+        const updatedProductos = [...productos];
+        updatedProductos[index][field] = value;
+
+        // Actualiza el subtotal basado en la cantidad
+        if (field === 'cantidad') {
+            const precioUnitario = 100; // Cambia esto según tu lógica de precios
+            updatedProductos[index].subtotal = value ? precioUnitario * value : 0;
+        }
+
+        setProductos(updatedProductos);
+    };
+
+    const handleEliminarProducto = (index) => {
+        const updatedProductos = productos.filter((_, i) => i !== index);
+        setProductos(updatedProductos);
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const nuevaCotizacion = { idCliente: nuevoCliente, idCotizacion, productos };
+
+        try {
+            const response = await fetch('http://localhost:3002/api/cotizaciones/crear/nuevo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(nuevaCotizacion)
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert('Cotización creada con éxito');
+                handleCloseModal();
+                fetchCotizaciones(); // Vuelve a obtener las cotizaciones
+            } else {
+                alert(data.mensaje);
+            }
+        } catch (error) {
+            console.error("Error al crear cotización:", error);
+        }
+    };
+
+    const totalPages = Math.ceil(cotizaciones.length / itemsPerPage);
+    const currentItems = cotizaciones.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
     };
 
     return (
@@ -19,29 +146,28 @@ const Cotizaciones = () => {
                 <img src="../img/electrotech_color.png" alt="Tienda" className="store-image" />
                 <div className="user-info">
                     <img src="../img/usuario.png" alt="Usuario" className="usr-icon" />
-                    <select id="empleado" className="employee-select">
-                        <option value="empleado1">Empleado 1</option>
-                        <option value="empleado2">Empleado 2</option>
-                        <option value="cerrar-sesion">Cerrar Sesión</option>
+                    <select id="empleado" className="employee-select" onChange={handleSelectChange} value={userName}>
+                        <option value={userName}>{userName}</option>
+                        <option value="logout">Cerrar Sesión</option>
                     </select>
                 </div>
             </header>
             <div className="container">
                 <nav className="sidebar">
-                    <Link to ="/ControlPanel">
-                        <button className="sidebar-button" ><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
+                    <Link to="/ControlPanel">
+                        <button className="sidebar-button"><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
                     </Link>
-                    <Link to ="/Cotizaciones">
-                        <button className="sidebar-button active" ><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
+                    <Link to="/Cotizaciones">
+                        <button className="sidebar-button active"><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
                     </Link>
-                    <Link to ="/Clientes">
-                        <button className="sidebar-button" ><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
+                    <Link to="/Clientes">
+                        <button className="sidebar-button"><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
                     </Link>
-                    <Link to ="/Productos">
-                        <button className="sidebar-button" ><img src="../img/productos1.png" alt="Productos" /> Productos</button>
+                    <Link to="/Productos">
+                        <button className="sidebar-button"><img src="../img/productos1.png" alt="Productos" /> Productos</button>
                     </Link>
-                    <Link to ="/Usuarios">
-                        <button className="sidebar-button" ><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
+                    <Link to="/Usuarios">
+                        <button className="sidebar-button"><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
                     </Link>
                 </nav>
                 <main className="main">
@@ -52,7 +178,7 @@ const Cotizaciones = () => {
                     <h2 className="panel-title">Gestión de Cotizaciones</h2>
                     <div className="config-container">
                         <div className="search-container full-width">
-                            <img src="../img/search.png" alt="Buscar" className="search-icon"></img>
+                            <img src="../img/search.png" alt="Buscar" className="search-icon" />
                             <input type="text" placeholder="Buscar Cotizaciones..." className="search-input" />
                             <button className='new-quote-button' onClick={handleOpenModal}>+ Nueva Cotización</button>
                         </div>
@@ -61,106 +187,124 @@ const Cotizaciones = () => {
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Fecha Alta</th>
-                                    <th>Atención</th>
-                                    <th>Cliente</th>
-                                    <th>Neto</th>
+                                    <th>Fecha</th>
                                     <th>Total</th>
+                                    <th>ID Cliente</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>2024-10-29</td>
-                                    <td>Juan Perez</td>
-                                    <td>Empresa XYZ</td>
-                                    <td>$500</td>
-                                    <td>$600</td>
-                                    <td className="action-buttons">
-                                        <button className="edit-button"><img src="../img/edit.png" alt="Editar" /></button>
-                                        <button className="delete-button"><img src="../img/delete.png" alt="Eliminar" /></button>
-                                    </td>
-                                </tr>
+                                {currentItems.map(cotizacion => (
+                                    <tr key={cotizacion.id}>
+                                        <td>{cotizacion.id}</td>
+                                        <td>{new Date(cotizacion.fecha).toLocaleDateString()}</td>
+                                        <td>${cotizacion.total}</td>
+                                        <td>{cotizacion.idCliente}</td>
+                                        <td className="action-buttons">
+                                            <button className="edit-button"><img src="../img/edit.png" alt="Editar" /></button>
+                                            <button className="delete-button"><img src="../img/delete.png" alt="Eliminar" /></button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
+
+                        <div className="pagination">
+                            <button className="pagination-button" onClick={handlePreviousPage} disabled={currentPage === 1}>Ant</button>
+                            <span>{currentPage}</span>
+                            <button className="pagination-button" onClick={handleNextPage} disabled={currentPage === totalPages}>Sig</button>
+                        </div>
 
                         {showModal && (
                             <div className="modal-overlay">
                                 <div className="modal-content">
                                     <img src="../img/add.png" alt="Agregar" className="modal-icon" />
                                     <h2>Agregar Nueva Cotización</h2>
-                                    <form className="modal-form">
+                                    <form className="modal-form" onSubmit={handleSubmit}>
                                         <label>Cliente</label>
-                                        <input type="text" placeholder="Cliente" />
-                                        <label>Atención</label>
-                                        <input type="text" placeholder="Atención" />
-                                        <label>Teléfono</label>
-                                        <input type="text" placeholder="Teléfono" />
-                                        <label>Empresa</label>
-                                        <input type="text" placeholder="Empresa" />
-                                        <label>Email</label>
-                                        <input type="email" placeholder="Correo Electrónico" />
+                                        <input
+                                            type="text"
+                                            value={nuevoCliente}
+                                            onChange={(e) => setNuevoCliente(e.target.value)}
+                                            placeholder="ID Cliente"
+                                            required
+                                        />
+                                        <div>
+                                            <h3>Productos</h3>
+                                            <table className="details-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID Producto</th>
+                                                        <th>Cantidad</th>
+                                                        <th>Subtotal</th>
+                                                        <th>Descripción</th>
+                                                        <th>Eliminar</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {productos.map((producto, index) => (
+                                                        <tr key={index}>
+                                                            <td>
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="ID Producto"
+                                                                    value={producto.idProducto}
+                                                                    onChange={(e) => handleChangeProducto(index, 'idProducto', e.target.value)}
+                                                                    required
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <input
+                                                                    type="number"
+                                                                    placeholder="Cantidad"
+                                                                    value={producto.cantidad}
+                                                                    onChange={(e) => handleChangeProducto(index, 'cantidad', e.target.value)}
+                                                                    required
+                                                                />
+                                                            </td>
+                                                            <td>${producto.subtotal}</td>
+                                                            <td>
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="Descripción"
+                                                                    value={producto.descripcion}
+                                                                    onChange={(e) => handleChangeProducto(index, 'descripcion', e.target.value)}
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <button className="delete-button">
+                                                                    <img src="../img/delete.png" onClick={() => handleEliminarProducto(index)}></img>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                            <button type="button" className="new-quote-button"onClick={handleAgregarProducto}>Agregar Otro Producto</button>
+                                        </div>
                                         <div className="modal-buttons">
                                             <button type="button" onClick={handleCloseModal} className="close-button">Cerrar</button>
-                                            <button type="button" className="add-product-button">Agregar Producto</button>
-                                            <button type="button" className="print-quote-button"><img src="../img/print.png" alt="Imprimir" /></button>
-                                        </div>
-
-                                        <table className="product-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Código</th>
-                                                    <th>Cantidad</th>
-                                                    <th>Descripción</th>
-                                                    <th>Precio Unitario</th>
-                                                    <th>Precio Total</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>001</td>
-                                                    <td>2</td>
-                                                    <td>Producto A</td>
-                                                    <td>$100</td>
-                                                    <td>$200</td>
-                                                    <td>
-                                                        <button className="delete-button"><img src="../img/delete.png" alt="Eliminar" /></button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-
-                                        <div className="dropdown-container">
-                                            <label>Condiciones de Pago:</label>
-                                            <select>
-                                                <option value="pago1">Condición 1</option>
-                                                <option value="pago2">Condición 2</option>
-                                            </select>
-
-                                            <label>Validez:</label>
-                                            <select>
-                                                <option value="validez1">Validez 1</option>
-                                                <option value="validez2">Validez 2</option>
-                                            </select>
-
-                                            <label>Tiempo de Entrega:</label>
-                                            <select>
-                                                <option value="tiempo1">Tiempo 1</option>
-                                                <option value="tiempo2">Tiempo 2</option>
-                                            </select>
+                                            <button type="submit" className="add-product-button">Guardar Cotización</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         )}
+                        
+                        {/* Modal de Confirmación de Cierre de Sesión */}
+                        {showLogoutConfirmModal && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <h2>Confirmar Cierre de Sesión</h2>
+                                    <p>¿Estás seguro de que deseas cerrar sesión?</p>
+                                    <div className="modal-buttons">
+                                        <button type="button" onClick={handleCloseLogoutConfirmModal} className="close-button">Cancelar</button>
+                                        <button onClick={handleLogout} className="delete-button">Sí</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
-                        <div className="pagination">
-                            <button className="pagination-button">Anterior</button>
-                            <button className="pagination-button">1</button>
-                            <button className="pagination-button">Siguiente</button>
-                        </div>
                     </div>
                 </main>
             </div>
