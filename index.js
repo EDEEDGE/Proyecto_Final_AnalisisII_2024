@@ -10,7 +10,6 @@ const usuarios = require('./routes/usuarios');
 const clientes = require('./routes/clientes');
 const productos = require('./routes/productos');
 const cotizaciones = require('./routes/cotizaciones');
-const contadores = require('./routes/contadores');
 
 //configuraciones
 const app = express();
@@ -37,8 +36,6 @@ app.use('/api/usuarios', usuarios);
 app.use('/api/clientes', clientes);
 app.use('/api/productos', productos);
 app.use('/api/cotizaciones', cotizaciones);
-app.use('/api/contadores', rutasContadores);
-
 
 //sincronizar los modelos con la base de datos
 dbclient.sync({ alter: true }).then(() => {

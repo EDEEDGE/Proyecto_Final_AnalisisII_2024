@@ -1,14 +1,38 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import '../components/Usuarios.css';
 
 const Usuarios = () => {
     const [showModal, setShowModal] = useState(false);
     const [nombre, setNombre] = useState('');
     const [credenciales, setCredenciales] = useState('');
-    const [usuarios, setUsuarios] = useState([
-        { id: 4, nombre: 'josue' } // Datos de ejemplo
-    ]);
+    const [usuarios, setUsuarios] = useState([]); // Cambia esto para iniciar vacío
+    const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
+    const [userName, setUserName] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const storedUserName = localStorage.getItem('userName');
+        setUserName(storedUserName || 'Usuario');
+        
+        // Obtener usuarios al cargar el componente
+        const fetchUsuarios = async () => {
+            try {
+                const response = await fetch('http://localhost:3002/api/usuarios/obtenerUsuarios', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` // Asegúrate de incluir el token si es necesario
+                    }
+                });
+                const data = await response.json();
+                setUsuarios(data); // Actualiza el estado con los usuarios obtenidos
+            } catch (error) {
+                console.error('Error al obtener usuarios:', error);
+            }
+        };
+
+        fetchUsuarios(); // Llama a la función para obtener usuarios
+    }, []); // Este useEffect se ejecuta solo una vez al montar el componente
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -18,30 +42,47 @@ const Usuarios = () => {
         setShowModal(false);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Aquí debes implementar la lógica para enviar el nuevo usuario a tu API
-        // Ejemplo de llamada a la API (ajusta la URL y el método según sea necesario)
-        fetch('http://localhost:3002/api/usuarios/registrar', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ nombre, credenciales }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Manejo de la respuesta de la API
+        try {
+            const response = await fetch('http://localhost:3002/api/usuarios/registrar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ nombre, credenciales }),
+            });
+            const data = await response.json();
             console.log('Usuario agregado:', data);
-            // Agregar el nuevo usuario a la lista local (actualiza el estado)
-            setUsuarios(prev => [...prev, { id: data.id, nombre }]); // Asumiendo que la API devuelve el nuevo id
+            setUsuarios(prev => [...prev, { id: data.usuario.id, nombre }]); // Suponiendo que la API devuelve el nuevo id
             setNombre('');
             setCredenciales('');
             handleCloseModal();
-        })
-        .catch((error) => {
+        } catch (error) {
             console.error('Error al agregar usuario:', error);
-        });
+        }
+    };
+
+    const handleOpenLogoutConfirmModal = () => {
+        setShowLogoutConfirmModal(true);
+    };
+
+    const handleCloseLogoutConfirmModal = () => {
+        setShowLogoutConfirmModal(false);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userName');
+        navigate('/login');
+    };
+
+    const handleSelectChange = (e) => {
+        const selectedValue = e.target.value;
+        if (selectedValue === 'cerrar-sesion') {
+            handleOpenLogoutConfirmModal();
+            e.target.value = userName; // Restablecer el valor del select
+        }
     };
 
     return (
@@ -50,9 +91,8 @@ const Usuarios = () => {
                 <img src="../img/electrotech_color.png" alt="Tienda" className="store-image" />
                 <div className="user-info">
                     <img src="../img/usuario.png" alt="Usuario" className="usr-icon" />
-                    <select id="empleado" className="employee-select">
-                        <option value="empleado1">Empleado 1</option>
-                        <option value="empleado2">Empleado 2</option>
+                    <select id="empleado" className="employee-select" onChange={handleSelectChange} value={userName}>
+                        <option value={userName}>{userName}</option>
                         <option value="cerrar-sesion">Cerrar Sesión</option>
                     </select>
                 </div>
@@ -83,7 +123,7 @@ const Usuarios = () => {
                     <h2 className="panel-title">Gestión de Usuarios</h2>
                     <div className="config-container">
                         <div className="search-container full-width">
-                            <img src="../img/search.png" alt="Buscar" className="search-icon"></img>
+                            <img src="../img/search.png" alt="Buscar" className="search-icon" />
                             <input type="text" placeholder="Buscar usuario..." className="search-input" />
                             <button className='new-user-button' onClick={handleOpenModal}>+ Nuevo Usuario</button>
                         </div>
@@ -123,6 +163,20 @@ const Usuarios = () => {
                                             <button type="submit" className="save-button">Guardar</button>
                                         </div>
                                     </form>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Modal de Confirmación de Cierre de Sesión */}
+                        {showLogoutConfirmModal && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <h2>Confirmar Cierre de Sesión</h2>
+                                    <p>¿Estás seguro de que deseas cerrar sesión?</p>
+                                    <div className="modal-buttons">
+                                        <button type="button" onClick={handleCloseLogoutConfirmModal} className="close-button">Cancelar</button>
+                                        <button onClick={handleLogout} className="delete-button">Sí</button>
+                                    </div>
                                 </div>
                             </div>
                         )}
