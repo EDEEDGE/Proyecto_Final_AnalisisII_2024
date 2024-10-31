@@ -20,4 +20,4 @@ Thumbs.db
 temp/
 
 #ignorar el .env por seguridad
-,env
+.env
