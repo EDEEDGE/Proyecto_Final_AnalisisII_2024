@@ -20,6 +20,8 @@ const Clientes = () => {
     const [clienteAEditar, setClienteAEditar] = useState(null);
     const [clienteAEliminar, setClienteAEliminar] = useState(null);
     const [userName, setUserName] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -160,6 +162,14 @@ const Clientes = () => {
         }
     };
 
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    const totalPages = Math.ceil(clientes.length / itemsPerPage);
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const currentClientes = clientes.slice(startIdx, startIdx + itemsPerPage);
+
     return (
         <>
             <header className="header">
@@ -216,27 +226,40 @@ const Clientes = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {clientes.map((cliente) => (
-                                    <tr key={cliente.id}>
-                                        <td>{cliente.id}</td>
-                                        <td>{cliente.nombre}</td>
-                                        <td>{cliente.direccion}</td>
-                                        <td>{cliente.correoElectronico}</td>
-                                        <td>{cliente.telefono}</td>
-                                        <td>{cliente.DPI}</td>
-                                        <td>{new Date(cliente.fechaIngreso).toLocaleDateString()}</td>
-                                        <td className="action-buttons">
-                                            <button className="edit-button" onClick={() => handleOpenEditModal(cliente)}>
-                                                <img src="../img/edit.png" alt="Editar" />
-                                            </button>
-                                            <button className="delete-button" onClick={() => handleOpenDeleteConfirmModal(cliente)}>
-                                                <img src="../img/delete.png" alt="Eliminar" />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
+                            {currentClientes.map((cliente) => (
+                                <tr key={cliente.id}>
+                                    <td>{cliente.id}</td>
+                                    <td>{cliente.nombre}</td>
+                                    <td>{cliente.direccion}</td>
+                                    <td>{cliente.correoElectronico}</td>
+                                    <td>{cliente.telefono}</td>
+                                    <td>{cliente.DPI}</td>
+                                    <td>{new Date(cliente.fechaIngreso).toLocaleDateString()}</td>
+                                    <td className="action-buttons">
+                                        <button className="edit-button" onClick={() => handleOpenEditModal(cliente)}>
+                                            <img src="../img/edit.png" alt="Editar" />
+                                        </button>
+                                        <button className="delete-button" onClick={() => handleOpenDeleteConfirmModal(cliente)}>
+                                            <img src="../img/delete.png" alt="Eliminar" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
                             </tbody>
                         </table>
+
+                        {/* Controles de Paginación */}
+                        <div className="pagination">
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <button
+                                    key={index}
+                                    className={`page-button ${index + 1 === currentPage ? 'active' : ''}`}
+                                    onClick={() => handlePageChange(index + 1)}
+                                >
+                                {index + 1}
+                                </button>
+                            ))}
+                        </div>
 
                         {showModal && (
                             <div className="modal-overlay">
