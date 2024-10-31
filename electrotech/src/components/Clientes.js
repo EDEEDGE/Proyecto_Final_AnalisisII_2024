@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../components/Clientes.css';
 
 const Clientes = () => {
     const [showModal, setShowModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+    const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
     const [clientes, setClientes] = useState([]);
     const [nuevoCliente, setNuevoCliente] = useState({
         nombre: '',
@@ -12,8 +15,40 @@ const Clientes = () => {
         correoElectronico: '',
         telefono: '',
         DPI: '',
-        fechaIngreso: new Date().toISOString().split('T')[0], // Formato YYYY-MM-DD
+        fechaIngreso: new Date().toISOString().split('T')[0],
     });
+    const [clienteAEditar, setClienteAEditar] = useState(null);
+    const [clienteAEliminar, setClienteAEliminar] = useState(null);
+    const [userName, setUserName] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const storedUserName = localStorage.getItem('userName');
+        setUserName(storedUserName || 'Usuario');
+        fetchClientes();
+    }, []);
+
+    const handleOpenLogoutConfirmModal = () => {
+        setShowLogoutConfirmModal(true);
+    };
+
+    const handleCloseLogoutConfirmModal = () => {
+        setShowLogoutConfirmModal(false);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userName');
+        navigate('/login');
+    };
+
+    const handleSelectChange = (e) => {
+        const selectedValue = e.target.value;
+        if (selectedValue === 'logout') {
+            handleOpenLogoutConfirmModal();
+            e.target.value = userName; // Restablecer el valor del select
+        }
+    };
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -21,7 +56,6 @@ const Clientes = () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
-        // Reiniciar los campos del nuevo cliente al cerrar el modal
         setNuevoCliente({
             nombre: '',
             direccion: '',
@@ -32,25 +66,45 @@ const Clientes = () => {
         });
     };
 
-    // Función para manejar cambios en los inputs del nuevo cliente
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setNuevoCliente({ ...nuevoCliente, [name]: value });
+    const handleOpenEditModal = (cliente) => {
+        setClienteAEditar(cliente);
+        setShowEditModal(true);
     };
 
-    // Función para enviar el nuevo cliente
+    const handleCloseEditModal = () => {
+        setShowEditModal(false);
+        setClienteAEditar(null);
+    };
+
+    const handleOpenDeleteConfirmModal = (cliente) => {
+        setClienteAEliminar(cliente);
+        setShowDeleteConfirmModal(true);
+    };
+
+    const handleCloseDeleteConfirmModal = () => {
+        setShowDeleteConfirmModal(false);
+        setClienteAEliminar(null);
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        if (clienteAEditar) {
+            setClienteAEditar({ ...clienteAEditar, [name]: value });
+        } else {
+            setNuevoCliente({ ...nuevoCliente, [name]: value });
+        }
+    };
+
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Evita la recarga de la página
+        e.preventDefault();
         try {
-            const token = localStorage.getItem('token'); // Obtén el token de autenticación
+            const token = localStorage.getItem('token');
             await axios.post('http://localhost:3002/api/clientes/crear/nuevo', nuevoCliente, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            // Cierra el modal después de guardar
             handleCloseModal();
-            // Vuelve a obtener los clientes
             fetchClientes();
         } catch (error) {
             console.error('Error al crear nuevo cliente', error);
@@ -58,10 +112,42 @@ const Clientes = () => {
         }
     };
 
-    // Función para obtener todos los clientes
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem('token');
+            await axios.put(`http://localhost:3002/api/clientes/actualizar/${clienteAEditar.id}`, clienteAEditar, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            handleCloseEditModal();
+            fetchClientes();
+        } catch (error) {
+            console.error('Error al editar cliente', error);
+            alert('Error al editar cliente. Verifica la información e intenta nuevamente.');
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`http://localhost:3002/api/clientes/eliminar/${clienteAEliminar.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            handleCloseDeleteConfirmModal();
+            fetchClientes();
+        } catch (error) {
+            console.error('Error al eliminar cliente', error);
+            alert('Error al eliminar cliente.');
+        }
+    };
+
     const fetchClientes = async () => {
         try {
-            const token = localStorage.getItem('token'); // Obtén el token de autenticación
+            const token = localStorage.getItem('token');
             const response = await axios.get('http://localhost:3002/api/clientes/obtener/todos', {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -74,20 +160,15 @@ const Clientes = () => {
         }
     };
 
-    useEffect(() => {
-        fetchClientes(); // Obtener clientes al cargar el componente
-    }, []);
-
     return (
         <>
             <header className="header">
                 <img src="../img/electrotech_color.png" alt="Tienda" className="store-image" />
                 <div className="user-info">
                     <img src="../img/usuario.png" alt="Usuario" className="usr-icon" />
-                    <select id="empleado" className="employee-select">
-                        <option value="empleado1">Empleado 1</option>
-                        <option value="empleado2">Empleado 2</option>
-                        <option value="cerrar-sesion">Cerrar Sesión</option>
+                    <select id="empleado" className="employee-select" onChange={handleSelectChange} value={userName}>
+                        <option value={userName}>{userName}</option>
+                        <option value="logout">Cerrar Sesión</option>
                     </select>
                 </div>
             </header>
@@ -121,7 +202,6 @@ const Clientes = () => {
                             <button className='new-user-button' onClick={handleOpenModal}>+ Nuevo Cliente</button>
                         </div>
 
-                        {/* Tabla de clientes */}
                         <table className="user-table">
                             <thead>
                                 <tr>
@@ -146,8 +226,12 @@ const Clientes = () => {
                                         <td>{cliente.DPI}</td>
                                         <td>{new Date(cliente.fechaIngreso).toLocaleDateString()}</td>
                                         <td className="action-buttons">
-                                            <button className="edit-button"><img src="../img/edit.png" alt="Editar" /></button>
-                                            <button className="delete-button"><img src="../img/delete.png" alt="Eliminar" /></button>
+                                            <button className="edit-button" onClick={() => handleOpenEditModal(cliente)}>
+                                                <img src="../img/edit.png" alt="Editar" />
+                                            </button>
+                                            <button className="delete-button" onClick={() => handleOpenDeleteConfirmModal(cliente)}>
+                                                <img src="../img/delete.png" alt="Eliminar" />
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
@@ -167,24 +251,73 @@ const Clientes = () => {
                                         <label>Correo Electrónico</label>
                                         <input type="email" name="correoElectronico" value={nuevoCliente.correoElectronico} onChange={handleChange} placeholder="Correo Electrónico" required />
                                         <label>Número de Teléfono</label>
-                                        <input type="text" name="telefono" value={nuevoCliente.telefono} onChange={handleChange} placeholder="Número de Teléfono" required />
-                                        <label>No. de Identificación</label>
+                                        <input type="tel" name="telefono" value={nuevoCliente.telefono} onChange={handleChange} placeholder="Número de Teléfono" required />
+                                        <label>No. Identificación</label>
                                         <input type="text" name="DPI" value={nuevoCliente.DPI} onChange={handleChange} placeholder="No. Identificación" required />
                                         <label>Fecha de Ingreso</label>
                                         <input type="date" name="fechaIngreso" value={nuevoCliente.fechaIngreso} onChange={handleChange} required />
                                         <div className="modal-buttons">
-                                            <button type="button" onClick={handleCloseModal} className="close-button">Cerrar</button>
+                                            <button type="button" onClick={handleCloseModal} className="close-button">Cancelar</button>
                                             <button type="submit" className="save-button">Guardar</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         )}
-                        <div className="pagination">
-                            <button className="pagination-button">Anterior</button>
-                            <button className="pagination-button">1</button>
-                            <button className="pagination-button">Siguiente</button>
-                        </div>
+
+                        {showEditModal && clienteAEditar && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <img src="../img/edit.png" alt="Editar" className="modal-icon" />
+                                    <h2>Editar Cliente</h2>
+                                    <form className="modal-form" onSubmit={handleEditSubmit}>
+                                        <label>Nombre del Cliente</label>
+                                        <input type="text" name="nombre" value={clienteAEditar.nombre} onChange={handleChange} required />
+                                        <label>Dirección</label>
+                                        <input type="text" name="direccion" value={clienteAEditar.direccion} onChange={handleChange} required />
+                                        <label>Correo Electrónico</label>
+                                        <input type="email" name="correoElectronico" value={clienteAEditar.correoElectronico} onChange={handleChange} required />
+                                        <label>Número de Teléfono</label>
+                                        <input type="tel" name="telefono" value={clienteAEditar.telefono} onChange={handleChange} required />
+                                        <label>No. Identificación</label>
+                                        <input type="text" name="DPI" value={clienteAEditar.DPI} onChange={handleChange} required />
+                                        <label>Fecha de Ingreso</label>
+                                        <input type="date" name="fechaIngreso" value={clienteAEditar.fechaIngreso.split('T')[0]} onChange={handleChange} required />
+                                        <div className="modal-buttons">
+                                            <button type="button" onClick={handleCloseEditModal} className="close-button">Cancelar</button>
+                                            <button type="submit" className="save-button">Actualizar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
+
+                        {showDeleteConfirmModal && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <h2>Confirmar Eliminación</h2>
+                                    <p>¿Estás seguro de que deseas eliminar a {clienteAEliminar.nombre}?</p>
+                                    <div className="modal-buttons">
+                                        <button type="button" onClick={handleCloseDeleteConfirmModal} className="close-button">Cancelar</button>
+                                        <button onClick={handleDelete} className="delete-button">Eliminar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Modal de Confirmación de Cierre de Sesión */}
+                        {showLogoutConfirmModal && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <h2>Confirmar Cierre de Sesión</h2>
+                                    <p>¿Estás seguro de que deseas cerrar sesión?</p>
+                                    <div className="modal-buttons">
+                                        <button type="button" onClick={handleCloseLogoutConfirmModal} className="close-button">Cancelar</button>
+                                        <button onClick={handleLogout} className="delete-button">Sí</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </main>
             </div>
