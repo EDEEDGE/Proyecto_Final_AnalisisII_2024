@@ -69,4 +69,4 @@ const enviar = async (cotizacion, correoCliente) => {
   }
 };
 
-module.exports = { enviar };
+module.exports = { enviar }; 
