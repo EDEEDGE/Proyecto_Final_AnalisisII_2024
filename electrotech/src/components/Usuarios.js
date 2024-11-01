@@ -7,8 +7,11 @@ const Usuarios = () => {
     const [nombre, setNombre] = useState('');
     const [credenciales, setCredenciales] = useState('');
     const [usuarios, setUsuarios] = useState([]); // Cambia esto para iniciar vacío
+    const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
     const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
     const [userName, setUserName] = useState('');
+    const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
+    const usersPerPage = 10; // Constante de usuarios por página
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -85,6 +88,32 @@ const Usuarios = () => {
         }
     };
 
+    // Función para actualizar el término de búsqueda
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+        setCurrentPage(1); // Resetear a la primera página cuando se realiza una búsqueda
+    };
+
+    // Filtrar usuarios en función del término de búsqueda
+    const filteredUsuarios = usuarios.filter(usuario =>
+        usuario.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+     // Calcular el índice inicial y final para la página actual
+     const indexOfLastUser = currentPage * usersPerPage;
+     const indexOfFirstUser = indexOfLastUser - usersPerPage;
+     const currentUsuarios = filteredUsuarios.slice(indexOfFirstUser, indexOfLastUser);
+ 
+     const totalPages = Math.ceil(filteredUsuarios.length / usersPerPage);
+ 
+     const handlePrevPage = () => {
+         if (currentPage > 1) setCurrentPage(currentPage - 1);
+     };
+ 
+     const handleNextPage = () => {
+         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+     };
+
     return (
         <>
             <header className="header">
@@ -124,7 +153,13 @@ const Usuarios = () => {
                     <div className="config-container">
                         <div className="search-container full-width">
                             <img src="../img/search.png" alt="Buscar" className="search-icon" />
-                            <input type="text" placeholder="Buscar usuario..." className="search-input" />
+                            <input 
+                                type="text" 
+                                placeholder="Buscar usuario..." 
+                                className="search-input" 
+                                value={searchTerm} // Conecta el estado de búsqueda
+                                onChange={handleSearchChange} // Llama a la función de cambio de búsqueda
+                            />
                             <button className='new-user-button' onClick={handleOpenModal}>+ Nuevo Usuario</button>
                         </div>
 
@@ -136,7 +171,7 @@ const Usuarios = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {usuarios.map(usuario => (
+                                {filteredUsuarios.map(usuario => (
                                     <tr key={usuario.id}>
                                         <td>{usuario.nombre}</td>
                                         <td className="action-buttons">
@@ -182,9 +217,9 @@ const Usuarios = () => {
                         )}
 
                         <div className="pagination">
-                            <button className="pagination-button">Anterior</button>
-                            <button className="pagination-button">1</button>
-                            <button className="pagination-button">Siguiente</button>
+                            <button onClick={handlePrevPage} className="pagination-button" disabled={currentPage === 1}>Anterior</button>
+                            <span> Pág {currentPage} de {totalPages}</span>
+                            <button onClick={handleNextPage} className="pagination-button" disabled={currentPage === totalPages}>Siguiente</button>
                         </div>
                     </div>
                 </main>

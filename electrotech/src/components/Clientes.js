@@ -265,19 +265,6 @@ const Clientes = () => {
                             </tbody>
                         </table>
 
-                        {/* Controles de Paginación */}
-                        <div className="pagination">
-                            {Array.from({ length: totalPages }, (_, index) => (
-                                <button
-                                    key={index}
-                                    className={`page-button ${index + 1 === currentPage ? 'active' : ''}`}
-                                    onClick={() => handlePageChange(index + 1)}
-                                >
-                                {index + 1}
-                                </button>
-                            ))}
-                        </div>
-
                         {showModal && (
                             <div className="modal-overlay">
                                 <div className="modal-content">
@@ -339,7 +326,7 @@ const Clientes = () => {
                                     <p>¿Estás seguro de que deseas eliminar a {clienteAEliminar.nombre}?</p>
                                     <div className="modal-buttons">
                                         <button type="button" onClick={handleCloseDeleteConfirmModal} className="close-button">Cancelar</button>
-                                        <button onClick={handleDelete} className="delete-button">Eliminar</button>
+                                        <button onClick={handleDelete} className="delete-button">Si</button>
                                     </div>
                                 </div>
                             </div>
@@ -358,6 +345,26 @@ const Clientes = () => {
                                 </div>
                             </div>
                         )}
+
+                        {/* Controles de Paginación */}
+                        <div className="pagination">
+                            <button 
+                                className={`pagination-button ${currentPage === 1 ? 'disabled' : ''}`} 
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
+                            >
+                                Anterior
+                            </button>
+                            <span>Pág {currentPage} de {totalPages}</span>
+                            <button 
+                                className={`pagination-button ${currentPage === totalPages ? 'disabled' : ''}`} 
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                disabled={currentPage === totalPages}
+                            >
+                                Siguiente
+                            </button>
+                        </div>
+
                     </div>
                 </main>
             </div>

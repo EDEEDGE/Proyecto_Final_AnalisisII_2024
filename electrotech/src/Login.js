@@ -15,9 +15,13 @@ function Login() {
                 nombre,
                 credenciales
             });
-            // Suponiendo que el token se devuelve en la respuesta
+            // Suponiendo que el token y el nombre se devuelven en la respuesta
             const { nuevoToken } = response.data;
             localStorage.setItem('token', nuevoToken); // Guarda el token en localStorage
+    
+            // Guarda el nombre del usuario en localStorage
+            localStorage.setItem('userName', nombre); // Cambia esto si `nombre` no es el nombre que deseas almacenar
+    
             navigate('/ControlPanel'); // Redirige al panel de control
         } catch (error) {
             if (error.response) {
@@ -26,7 +30,7 @@ function Login() {
                 setError('Error en el servidor...');
             }
         }
-    };
+    };    
 
     return (
         <div className="page-container">
