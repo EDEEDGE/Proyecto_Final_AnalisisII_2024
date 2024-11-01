@@ -18,7 +18,9 @@ rutas.get('/obtener/todo', autenticarToken, obtenerCotizacion);
 rutas.put('/actualizar/:id', autenticarToken, actualizarCotizacion); //buscamos la cotizacion y sus detalles por id
 rutas.delete('/eliminar/:id', autenticarToken, eliminarCotizacion);
 rutas.get('/obtener/cantidad/todos', autenticarToken, obtenerCantidadCotizaciones);
+
 rutas.post('/enviar/correo/:id', autenticarToken, enviarCorreo);
+
 
 
 module.exports = rutas;

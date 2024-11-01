@@ -167,6 +167,7 @@ const obtenerCantidadCotizaciones = async (req, res) => {
   }
 };
 
+
 //enviar por correo
 const enviarCorreo = async (req, res) => {
   const {id} = req.params;
@@ -196,11 +197,14 @@ const enviarCorreo = async (req, res) => {
 
 };
 
+
 module.exports = {
   crearCotizacion,
   obtenerCotizacion,
   actualizarCotizacion,
   eliminarCotizacion,
   obtenerCantidadCotizaciones,
+
   enviarCorreo,
+
 };
