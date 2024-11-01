@@ -106,10 +106,23 @@ const eliminarProducto = async (req, res) => {
     }
 };
 
+//contar cuantos registros hay
+const contarProductos = async (req, res) => {
+    try{    
+        const cantidad = await Producto.count();
+        res.status(200).json(cantidad); //retornamos la cantidad de productos que hay
+
+    } catch (error) {
+        console.error('Error al obtener todos los productos', error);
+        res.status(500).json({ mensaje: 'Error en el servidor...' });
+    }
+};
+
 module.exports = {
     crearProducto,
     obtenerProductos,
     obtenerProductoPorId,
     actualizarProducto,
     eliminarProducto,
+    contarProductos,
 };
