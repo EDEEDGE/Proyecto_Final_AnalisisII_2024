@@ -96,6 +96,17 @@ const eliminarCliente = async (req, res) => {
     }
 };
 
+//obtener la cantidad de registros de clientes
+const contarClientes = async (req, res) => {
+    try{
+        const cantidad = await Cliente.count();
+        res.status(200).json(cantidad);
+    } catch (error) {
+        console.error('Error al obtener la cantidad de clientes...', error);
+        res.status(500).json({ mensaje: 'Error en el servidor...' });
+    }
+};
+
 
 module.exports = {
     crearCliente, 
@@ -103,4 +114,5 @@ module.exports = {
     obtenerClientesPorId,
     actualizarCliente,
     eliminarCliente,
+    contarClientes,
 }

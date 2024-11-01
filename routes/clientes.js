@@ -7,6 +7,7 @@ const {
     obtenerClientesPorId,
     actualizarCliente,
     eliminarCliente,
+    contarClientes,
 } = require ('../controllers/clientes');
 
 
@@ -18,5 +19,6 @@ rutas.get('/obtener/todos', autenticarToken, obtenerClientes);
 rutas.get('/obtener/:id', autenticarToken, obtenerClientesPorId);
 rutas.put('/actualizar/:id', autenticarToken, actualizarCliente);
 rutas.delete('/eliminar/:id', autenticarToken, eliminarCliente);
+rutas.get('/obtener/cantidad/todos', autenticarToken, contarClientes);
 
 module.exports = rutas;
