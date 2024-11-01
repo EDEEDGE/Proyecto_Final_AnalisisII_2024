@@ -3,6 +3,7 @@ const { where } = require("sequelize");
 const Cotizacion = require("../models/cotizacion"); // modelo cotización
 const DetalleCotizacion = require("../models/detalleCotizacion"); // modelo detalle cotización
 const Producto = require("../models/producto"); // modelo producto
+const { enviar } = require('./correos');//controlador de correos
 
 // Método para crear una cotización
 const crearCotizacion = async (req, res) => {
@@ -166,10 +167,40 @@ const obtenerCantidadCotizaciones = async (req, res) => {
   }
 };
 
+//enviar por correo
+const enviarCorreo = async (req, res) => {
+  const {id} = req.params;
+  const { correoCliente } = req.body;
+
+  try{  
+    //obtenemos la cotizacion
+    const cotizacion = await Cotizacion.findByPk(id, {
+      include: [{ model: DetalleCotizacion }],
+    });
+
+
+    //verificar si existe la cotizacion
+    if(!cotizacion) {
+      return res.status(404).json({ mensaje: "Cotizacion no encontrada..." });
+    }
+
+    //enviamos la cotizacion por correo
+    await enviar(cotizacion, correoCliente);//enviamos el correo del destinatario y el json de la cotizacion
+    res.status(200).json({ mensaje: 'La cotizacion fue enviada con exito...' });
+
+
+  } catch (error) {
+    console.error('Error al intentar enviar la cotizacion por correo...'. error);
+    res.status(500).json({ mensaje: 'Error en el servidor...' });
+  }
+
+};
+
 module.exports = {
   crearCotizacion,
   obtenerCotizacion,
   actualizarCotizacion,
   eliminarCotizacion,
   obtenerCantidadCotizaciones,
+  enviarCorreo,
 };
