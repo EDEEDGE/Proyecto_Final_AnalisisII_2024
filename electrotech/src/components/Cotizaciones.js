@@ -11,6 +11,7 @@ const Cotizaciones = () => {
     const [idCotizacion, setIdCotizacion] = useState(null);
     const [userName, setUserName] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
     const itemsPerPage = 10;
     const navigate = useNavigate();
 
@@ -126,7 +127,11 @@ const Cotizaciones = () => {
     };
 
     const totalPages = Math.ceil(cotizaciones.length / itemsPerPage);
-    const currentItems = cotizaciones.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    // Filtrar cotizaciones por ID según el término de búsqueda
+    const filteredCotizaciones = cotizaciones.filter(cotizacion => 
+        cotizacion.id.toString().includes(searchTerm)
+    );
+    const currentItems = filteredCotizaciones.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     const handlePreviousPage = () => {
         if (currentPage > 1) {
@@ -179,7 +184,13 @@ const Cotizaciones = () => {
                     <div className="config-container">
                         <div className="search-container full-width">
                             <img src="../img/search.png" alt="Buscar" className="search-icon" />
-                            <input type="text" placeholder="Buscar Cotizaciones..." className="search-input" />
+                            <input 
+                                type="text" 
+                                placeholder="Buscar Cotizaciones por ID..." 
+                                className="search-input" 
+                                value={searchTerm} 
+                                onChange={(e) => setSearchTerm(e.target.value)} // Actualiza el término de búsqueda
+                            />
                             <button className='new-quote-button' onClick={handleOpenModal}>+ Nueva Cotización</button>
                         </div>
 
