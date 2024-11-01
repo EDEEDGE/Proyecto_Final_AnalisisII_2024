@@ -5,11 +5,47 @@ import '../components/ControlPanel.css';
 const ControlPanel = () => {
     const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
     const [userName, setUserName] = useState('');
+    const [contadores, setContadores] = useState({ clientes: 0, cotizaciones: 0, productos: 0 });
     const navigate = useNavigate();
 
     useEffect(() => {
         const storedUserName = localStorage.getItem('userName');
         setUserName(storedUserName || 'Usuario');
+
+        // Función para obtener los contadores desde la API
+        const fetchContadores = async () => {
+            try {
+                const [clientesRes, cotizacionesRes, productosRes] = await Promise.all([
+                    fetch('http://localhost:3002/api/clientes/obtener/cantidad/todos', {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }),
+                    fetch('http://localhost:3002/api/cotizaciones/obtener/cantidad/todos', {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }),
+                    fetch('http://localhost:3002/api/productos/obtener/cantidad/todos', {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }),
+                ]);
+
+                const [clientes, cotizaciones, productos] = await Promise.all([
+                    clientesRes.json(),
+                    cotizacionesRes.json(),
+                    productosRes.json(),
+                ]);
+
+                setContadores({ clientes, cotizaciones, productos });
+            } catch (error) {
+                console.error('Error al obtener los contadores:', error);
+            }
+        };
+
+        fetchContadores();
     }, []);
 
     const handleOpenLogoutConfirmModal = () => {
@@ -76,7 +112,7 @@ const ControlPanel = () => {
                             </div>
                             <div className="card-info" style={{ backgroundColor: '#ffffff' }}>
                                 <h3>Cotizaciones</h3>
-                                <span className="number">25</span>
+                                <span className="number">{contadores.cotizaciones}</span>
                             </div>
                         </div>
                         <div className="card">
@@ -85,7 +121,7 @@ const ControlPanel = () => {
                             </div>
                             <div className="card-info" style={{ backgroundColor: '#ffffff' }}>
                                 <h3>Productos</h3>
-                                <span className="number">150</span>
+                                <span className="number">{contadores.productos}</span>
                             </div>
                         </div>
                         <div className="card">
@@ -94,7 +130,7 @@ const ControlPanel = () => {
                             </div>
                             <div className="card-info" style={{ backgroundColor: '#ffffff' }}>
                                 <h3>Clientes</h3>
-                                <span className="number">75</span>
+                                <span className="number">{contadores.clientes}</span>
                             </div>
                         </div>
                     </div>

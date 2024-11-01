@@ -17,11 +17,13 @@ const Clientes = () => {
         DPI: '',
         fechaIngreso: new Date().toISOString().split('T')[0],
     });
+    
     const [clienteAEditar, setClienteAEditar] = useState(null);
     const [clienteAEliminar, setClienteAEliminar] = useState(null);
     const [userName, setUserName] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -97,6 +99,11 @@ const Clientes = () => {
         }
     };
 
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value); // Actualizar el término de búsqueda
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -166,9 +173,13 @@ const Clientes = () => {
         setCurrentPage(newPage);
     };
 
+    const filteredClientes = clientes.filter(cliente => 
+        cliente.nombre.toLowerCase().includes(searchTerm.toLowerCase()) // Filtrar por nombre
+    );
+    
     const totalPages = Math.ceil(clientes.length / itemsPerPage);
     const startIdx = (currentPage - 1) * itemsPerPage;
-    const currentClientes = clientes.slice(startIdx, startIdx + itemsPerPage);
+    const currentClientes = filteredClientes.slice(startIdx, startIdx + itemsPerPage);
 
     return (
         <>
@@ -208,7 +219,13 @@ const Clientes = () => {
                     <div className="config-container">
                         <div className="search-container full-width">
                             <img src="../img/search.png" alt="Buscar" className="search-icon" />
-                            <input type="text" placeholder="Buscar Clientes..." className="search-input" />
+                            <input 
+                                type="text" 
+                                placeholder="Buscar Clientes..." 
+                                className="search-input" 
+                                value={searchTerm} 
+                                onChange={handleSearchChange} // Manejar el cambio de búsqueda
+                            />
                             <button className='new-user-button' onClick={handleOpenModal}>+ Nuevo Cliente</button>
                         </div>
 

@@ -21,6 +21,7 @@ const Productos = () => {
     const [productoAEditar, setProductoAEditar] = useState(null);
     const [productoAEliminar, setProductoAEliminar] = useState(null);
     const [userName, setUserName] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -97,6 +98,10 @@ const Productos = () => {
         }
     };
 
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -162,6 +167,10 @@ const Productos = () => {
         }
     };
 
+    const filteredProductos = productos.filter(producto =>
+        producto.codigo.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <>
             <header className="header">
@@ -201,7 +210,13 @@ const Productos = () => {
                     <div className="config-container">
                         <div className="search-container full-width">
                             <img src="../img/search.png" alt="Buscar" className="search-icon" />
-                            <input type="text" placeholder="Buscar producto..." className="search-input" />
+                            <input 
+                                type="text" 
+                                placeholder="Buscar producto por código..." 
+                                className="search-input" 
+                                value={searchTerm}
+                                onChange={handleSearchChange} 
+                            />
                             <button className='new-user-button' onClick={handleOpenModal}>+ Nuevo Producto</button>
                         </div>
 
@@ -220,7 +235,7 @@ const Productos = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {productos.map((producto) => (
+                                {filteredProductos.map((producto) => (
                                     <tr key={producto.id}>
                                         <td>{producto.id}</td>
                                         <td>{producto.codigo}</td>
