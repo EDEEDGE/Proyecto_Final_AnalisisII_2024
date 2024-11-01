@@ -22,6 +22,8 @@ const Productos = () => {
     const [productoAEliminar, setProductoAEliminar] = useState(null);
     const [userName, setUserName] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 10; // Número de productos por página
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -171,6 +173,21 @@ const Productos = () => {
         producto.codigo.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    // Cálculo de productos a mostrar en función de la página actual
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = filteredProductos.slice(indexOfFirstProduct, indexOfLastProduct);
+
+    const totalPages = Math.ceil(filteredProductos.length / productsPerPage);
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) setCurrentPage(currentPage - 1);
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+    };
+
     return (
         <>
             <header className="header">
@@ -235,7 +252,7 @@ const Productos = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredProductos.map((producto) => (
+                                {currentProducts.map((producto) => (
                                     <tr key={producto.id}>
                                         <td>{producto.id}</td>
                                         <td>{producto.codigo}</td>
@@ -349,10 +366,11 @@ const Productos = () => {
                             </div>
                         )}
 
+                        {/* Paginación */}
                         <div className="pagination">
-                            <button className="pagination-button">Anterior</button>
-                            <button className="pagination-button">1</button>
-                            <button className="pagination-button">Siguiente</button>
+                            <button onClick={handlePrevPage} className="pagination-button"disabled={currentPage === 1}>Anterior</button>
+                            <span>Pág {currentPage} de {totalPages}</span>
+                            <button onClick={handleNextPage} className="pagination-button"disabled={currentPage === totalPages}>Siguiente</button>
                         </div>
                     </div>
                 </main>

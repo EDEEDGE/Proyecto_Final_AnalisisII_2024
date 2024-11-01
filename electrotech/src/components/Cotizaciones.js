@@ -15,8 +15,32 @@ const Cotizaciones = () => {
     const [userName, setUserName] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
+    const [productPrices, setProductPrices] = useState({});
     const itemsPerPage = 10;
     const navigate = useNavigate();
+
+    // Función para obtener el precio de un producto
+    const fetchProductPrice = async (productId) => {
+        try {
+            const response = await fetch(`http://localhost:3002/api/productos/obtener/${productId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                return data.precio; // Asumiendo que el API retorna un objeto con una propiedad 'precio'
+            } else {
+                console.error('Error al obtener el precio del producto:', data);
+                return 0;
+            }
+        } catch (error) {
+            console.error('Error al obtener el precio del producto:', error);
+            return 0;
+        }
+    };
 
     const fetchCotizaciones = async () => {
         try {
@@ -96,14 +120,29 @@ const Cotizaciones = () => {
         setProductos([...productos, { idProducto: '', cantidad: '', descripcion: '', subtotal: 0 }]);
     };
 
-    // Actualizar los detalles de un producto existente
-    const handleChangeProducto = (index, field, value) => {
+     // Actualizar handleChangeProducto para manejar la obtención del precio
+     const handleChangeProducto = async (index, field, value) => {
         const updatedProductos = [...productos];
         updatedProductos[index][field] = value;
-        if (field === 'cantidad') {
-            const precioUnitario = 100; // Precio unitario de ejemplo
-            updatedProductos[index].subtotal = value ? precioUnitario * value : 0;
+
+        if (field === 'idProducto' && value) {
+            // Si ya tenemos el precio en cache, usarlo
+            if (productPrices[value]) {
+                const precio = productPrices[value];
+                updatedProductos[index].precioUnitario = precio;
+                updatedProductos[index].subtotal = precio * (updatedProductos[index].cantidad || 0);
+            } else {
+                // Si no está en cache, obtenerlo de la API
+                const precio = await fetchProductPrice(value);
+                setProductPrices(prev => ({ ...prev, [value]: precio }));
+                updatedProductos[index].precioUnitario = precio;
+                updatedProductos[index].subtotal = precio * (updatedProductos[index].cantidad || 0);
+            }
+        } else if (field === 'cantidad' && value) {
+            const precio = updatedProductos[index].precioUnitario || 0;
+            updatedProductos[index].subtotal = precio * value;
         }
+
         setProductos(updatedProductos);
     };
 
@@ -178,6 +217,28 @@ const Cotizaciones = () => {
             closeDeleteConfirmModal();
         }
     };
+
+    const handleSendEmail = async (idCotizacion) => {
+        try {
+            const response = await fetch(`http://localhost:3002/api/cotizaciones/enviar/correo/${idCotizacion}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            if (response.ok) {
+                alert("Correo enviado exitosamente.");
+            } else {
+                const data = await response.json();
+                alert(`Error al enviar el correo: ${data.mensaje}`);
+            }
+        } catch (error) {
+            console.error("Error al enviar el correo:", error);
+            alert("Hubo un problema al enviar el correo.");
+        }
+    };
+    
 
     const totalPages = Math.ceil(cotizaciones.length / itemsPerPage);
     // Filtrar cotizaciones por ID según el término de búsqueda
@@ -268,6 +329,9 @@ const Cotizaciones = () => {
                                             <button className="edit-button" onClick={() => openEditModal(cotizacion)}>
                                                 <img src="../img/edit.png" alt="Editar" />
                                             </button>
+                                            <button className="email-button" onClick={() => handleSendEmail(cotizacion.id)}>
+                                                <img src="../img/email.png" alt="Enviar Correo" />
+                                            </button>
                                             <button className="delete-button" onClick={() => openDeleteConfirmModal(cotizacion)}>
                                                 <img src="../img/delete.png" alt="Eliminar" />
                                             </button>
@@ -279,74 +343,74 @@ const Cotizaciones = () => {
 
                         {/* Modal para crear/editar cotización */}
                         {showModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <img src="../img/add.png" alt="Agregar" className="modal-icon" />
-                        <h2>{editMode ? 'Editar Cotización' : 'Editar Cotizacion'}</h2>
-                        <form className="modal-form" onSubmit={handleSubmit}>
-                            <label>Cliente</label>
-                            <input
-                                type="text"
-                                value={nuevoCliente}
-                                onChange={(e) => setNuevoCliente(e.target.value)}
-                                placeholder="ID Cliente"
-                                required
-                            />
-                            <div>
-                                <h3>Productos</h3>
-                                <table className="details-table">
-                                    <thead>
-                                        <tr>
-                                            <th>ID Producto</th>
-                                            <th>Cantidad</th>
-                                            <th>Subtotal</th>
-                                            <th>Descripción</th>
-                                            <th>Eliminar</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {productos.map((producto, index) => (
-                                            <tr key={index}>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="ID Producto"
-                                                        value={producto.idProducto}
-                                                        onChange={(e) => handleChangeProducto(index, 'idProducto', e.target.value)}
-                                                        required
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="Cantidad"
-                                                        value={producto.cantidad}
-                                                        onChange={(e) => handleChangeProducto(index, 'cantidad', e.target.value)}
-                                                        required
-                                                    />
-                                                </td>
-                                                <td>${producto.subtotal}</td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Descripción"
-                                                        value={producto.descripcion}
-                                                        onChange={(e) => handleChangeProducto(index, 'descripcion', e.target.value)}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <button className="delete-button" onClick={() => handleEliminarProducto(index)}>
-                                                        <img src="../img/delete.png" alt="Eliminar Producto" />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                                <button type="button" className="new-quote-button" onClick={handleAgregarProducto}>
-                                    Agregar Otro Producto
-                                </button>
-                            </div>
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <img src="../img/add.png" alt="Agregar" className="modal-icon" />
+                                    <h2>{editMode ? 'Editar Cotización' : 'Editar Cotizacion'}</h2>
+                                    <form className="modal-form" onSubmit={handleSubmit}>
+                                        <label>Cliente</label>
+                                        <input
+                                            type="text"
+                                            value={nuevoCliente}
+                                            onChange={(e) => setNuevoCliente(e.target.value)}
+                                            placeholder="ID Cliente"
+                                            required
+                                        />
+                                        <div>
+                                            <h3>Productos</h3>
+                                            <table className="details-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID Producto</th>
+                                                        <th>Cantidad</th>
+                                                        <th>Subtotal</th>
+                                                        <th>Descripción</th>
+                                                        <th>Eliminar</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {productos.map((producto, index) => (
+                                                        <tr key={index}>
+                                                            <td>
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="ID Producto"
+                                                                    value={producto.idProducto}
+                                                                    onChange={(e) => handleChangeProducto(index, 'idProducto', e.target.value)}
+                                                                    required
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <input
+                                                                    type="number"
+                                                                    placeholder="Cantidad"
+                                                                    value={producto.cantidad}
+                                                                    onChange={(e) => handleChangeProducto(index, 'cantidad', e.target.value)}
+                                                                    required
+                                                                />
+                                                            </td>
+                                                            <td>${producto.subtotal}</td>
+                                                            <td>
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="Descripción"
+                                                                    value={producto.descripcion}
+                                                                    onChange={(e) => handleChangeProducto(index, 'descripcion', e.target.value)}
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <button className="delete-button" onClick={() => handleEliminarProducto(index)}>
+                                                                    <img src="../img/delete.png" alt="Eliminar Producto" />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                            <button type="button" className="new-quote-button" onClick={handleAgregarProducto}>
+                                                Agregar Otro Producto
+                                            </button>
+                                        </div>
                                         <div className="modal-buttons">
                                             <button type="button" onClick={handleCloseModal} className="close-button">Cerrar</button>
                                             <button type="submit" className="add-product-button">{editMode ? 'Actualizar' : 'Guardar'} Cotización</button>
@@ -369,12 +433,6 @@ const Cotizaciones = () => {
                                 </div>
                             </div>
                         )}
-
-                        <div className="pagination">
-                            <button className="pagination-button" onClick={handlePreviousPage} disabled={currentPage === 1}>Ant</button>
-                            <span>{currentPage}</span>
-                            <button className="pagination-button" onClick={handleNextPage} disabled={currentPage === totalPages}>Sig</button>
-                        </div>
 
                         {showModal && (
                             <div className="modal-overlay">
@@ -465,6 +523,12 @@ const Cotizaciones = () => {
                                 </div>
                             </div>
                         )}
+                        
+                        <div className="pagination">
+                            <button onClick={handlePreviousPage} className="pagination-button" disabled={currentPage === 1}>Anterior</button>
+                            <span> Pág {currentPage} de {totalPages}</span>
+                            <button onClick={handleNextPage} className="pagination-button" disabled={currentPage === totalPages}>Siguiente</button>
+                        </div>
 
                     </div>
                 </main>
