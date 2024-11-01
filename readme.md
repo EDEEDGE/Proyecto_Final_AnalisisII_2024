@@ -26,4 +26,17 @@ DEPENDENCIAS UTILIZADAS
 # npm install bcryptjs //para encriptar contraseñas y los tokens
 # npm install jsonwebtoken //nos ayudara a crear una logica de login mas segura y compleja
 
+VARIABLES DE ENTORNO UTILIZADAS
 
+# DB_TYPE=postgresql // para el tipo de base de datos que se utilizara, se pueden agregar mas tipos de bases de datos
+# DB_HOST=localhost || dpg-cs8lfid6l47c73djg5jg-a.oregon-postgres.render.com //una es para local y la otra para la base de datos remota
+# DB_PORT=5432 //puerto de la base de datos, este no cambia para el local y en produccion
+# BD_USER=postgres || postgres_prueba_xglk_user //usuario postgres local y el de la base de datos remota
+# DB_PASSWORD=<contraseña> || 4AwboYYkZ8vqDIYI8gSFYWiE2eOAboX5
+# DB_NAME=proyecto01 || postgres_prueba_xglk //nombre de la base de datos local y remota
+# SSL=false || true //parametro para conectar a la base de datos remota, si es local se debe dejar en false.
+
+DEPENDENCIAS EXTRAS
+#conexion con la api de imgur
+# IMGUR_CLIENT_ID=313a4438a99bd0b // mi id de imgur
+# IMGUR_CLIENT_SECRET=7dfdb6a1e3ebebd8abe2b9c99e07982ba4e8fa53 // mi client secret
