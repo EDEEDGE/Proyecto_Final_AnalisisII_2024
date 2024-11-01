@@ -4,14 +4,17 @@ import '../components/Cotizaciones.css';
 
 const Cotizaciones = () => {
     const [showModal, setShowModal] = useState(false);
+    const [editMode, setEditMode] = useState(false);
     const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
+    const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+    const [selectedCotizacion, setSelectedCotizacion] = useState(null);
     const [cotizaciones, setCotizaciones] = useState([]);
     const [nuevoCliente, setNuevoCliente] = useState('');
-    const [productos, setProductos] = useState([{ idProducto: '', cantidad: '', descripcion: '', subtotal: 0 }]);
+    const [productos, setProductos] = useState([]); // Productos de la cotización actual
     const [idCotizacion, setIdCotizacion] = useState(null);
     const [userName, setUserName] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
+    const [searchTerm, setSearchTerm] = useState('');
     const itemsPerPage = 10;
     const navigate = useNavigate();
 
@@ -25,7 +28,6 @@ const Cotizaciones = () => {
                 }
             });
             const data = await response.json();
-
             if (Array.isArray(data)) {
                 setCotizaciones(data);
             } else {
@@ -66,63 +68,114 @@ const Cotizaciones = () => {
         }
     };
 
+    const openEditModal = (cotizacion) => {
+        setEditMode(true);
+        setIdCotizacion(cotizacion.id); // Guarda el ID de la cotización
+        setNuevoCliente(cotizacion.idCliente); // Carga el ID del cliente
+        console.log("Productos de la cotización:", cotizacion.DetalleCotizacions); // Verifica que los productos existan
+        setProductos(cotizacion.DetalleCotizacions || []); // Carga los productos existentes
+        setShowModal(true); // Abre el modal
+    };
+
     const handleOpenModal = () => {
+        setEditMode(false);
+        setIdCotizacion(Date.now());
+        setNuevoCliente('');
+        setProductos([{ idProducto: '', cantidad: '', descripcion: '', subtotal: 0 }]);
         setShowModal(true);
-        setIdCotizacion(Date.now()); // Genera un nuevo ID para la cotización al abrir el modal
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
         setNuevoCliente('');
         setProductos([{ idProducto: '', cantidad: '', descripcion: '', subtotal: 0 }]);
+        setEditMode(false);
     };
 
     const handleAgregarProducto = () => {
-        const nuevoProducto = { idProducto: '', cantidad: '', descripcion: '', subtotal: 0 };
-        setProductos([...productos, nuevoProducto]);
+        setProductos([...productos, { idProducto: '', cantidad: '', descripcion: '', subtotal: 0 }]);
     };
 
+    // Actualizar los detalles de un producto existente
     const handleChangeProducto = (index, field, value) => {
         const updatedProductos = [...productos];
         updatedProductos[index][field] = value;
-
-        // Actualiza el subtotal basado en la cantidad
         if (field === 'cantidad') {
-            const precioUnitario = 100; // Cambia esto según tu lógica de precios
+            const precioUnitario = 100; // Precio unitario de ejemplo
             updatedProductos[index].subtotal = value ? precioUnitario * value : 0;
         }
-
         setProductos(updatedProductos);
     };
 
+    // Eliminar un producto específico
     const handleEliminarProducto = (index) => {
         const updatedProductos = productos.filter((_, i) => i !== index);
         setProductos(updatedProductos);
     };
 
+    // Guardar o actualizar una cotización
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const nuevaCotizacion = { idCliente: nuevoCliente, idCotizacion, productos };
+        const cotizacionData = { idCliente: nuevoCliente, idCotizacion, productos };
 
         try {
-            const response = await fetch('http://localhost:3002/api/cotizaciones/crear/nuevo', {
-                method: 'POST',
+            const url = editMode
+                ? `http://localhost:3002/api/cotizaciones/actualizar/${idCotizacion}`
+                : 'http://localhost:3002/api/cotizaciones/crear/nuevo';
+
+            const response = await fetch(url, {
+                method: editMode ? 'PUT' : 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify(nuevaCotizacion)
+                body: JSON.stringify(cotizacionData)
             });
+
             const data = await response.json();
             if (response.ok) {
-                alert('Cotización creada con éxito');
+                alert(`Cotización ${editMode ? 'actualizada' : 'creada'} con éxito`);
                 handleCloseModal();
-                fetchCotizaciones(); // Vuelve a obtener las cotizaciones
+                fetchCotizaciones();
             } else {
                 alert(data.mensaje);
             }
         } catch (error) {
-            console.error("Error al crear cotización:", error);
+            console.error(`Error al ${editMode ? 'actualizar' : 'crear'} cotización:`, error);
+        }
+    };
+
+    const openDeleteConfirmModal = (cotizacion) => {
+        setSelectedCotizacion(cotizacion);
+        setShowDeleteConfirmModal(true);
+    };
+
+    const closeDeleteConfirmModal = () => {
+        setSelectedCotizacion(null);
+        setShowDeleteConfirmModal(false);
+    };
+
+    const handleEliminarCotizacion = async () => {
+        if (selectedCotizacion) {
+            try {
+                const response = await fetch(`http://localhost:3002/api/cotizaciones/eliminar/${selectedCotizacion.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    
+                    fetchCotizaciones(); // Actualiza la lista de cotizaciones
+                } else {
+                    alert("Error al eliminar la cotización");
+                }
+            } catch (error) {
+                console.error("Error al eliminar cotización:", error);
+            }
+            closeDeleteConfirmModal();
         }
     };
 
@@ -212,13 +265,110 @@ const Cotizaciones = () => {
                                         <td>${cotizacion.total}</td>
                                         <td>{cotizacion.idCliente}</td>
                                         <td className="action-buttons">
-                                            <button className="edit-button"><img src="../img/edit.png" alt="Editar" /></button>
-                                            <button className="delete-button"><img src="../img/delete.png" alt="Eliminar" /></button>
+                                            <button className="edit-button" onClick={() => openEditModal(cotizacion)}>
+                                                <img src="../img/edit.png" alt="Editar" />
+                                            </button>
+                                            <button className="delete-button" onClick={() => openDeleteConfirmModal(cotizacion)}>
+                                                <img src="../img/delete.png" alt="Eliminar" />
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
+
+                        {/* Modal para crear/editar cotización */}
+                        {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <img src="../img/add.png" alt="Agregar" className="modal-icon" />
+                        <h2>{editMode ? 'Editar Cotización' : 'Editar Cotizacion'}</h2>
+                        <form className="modal-form" onSubmit={handleSubmit}>
+                            <label>Cliente</label>
+                            <input
+                                type="text"
+                                value={nuevoCliente}
+                                onChange={(e) => setNuevoCliente(e.target.value)}
+                                placeholder="ID Cliente"
+                                required
+                            />
+                            <div>
+                                <h3>Productos</h3>
+                                <table className="details-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID Producto</th>
+                                            <th>Cantidad</th>
+                                            <th>Subtotal</th>
+                                            <th>Descripción</th>
+                                            <th>Eliminar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {productos.map((producto, index) => (
+                                            <tr key={index}>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="ID Producto"
+                                                        value={producto.idProducto}
+                                                        onChange={(e) => handleChangeProducto(index, 'idProducto', e.target.value)}
+                                                        required
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="Cantidad"
+                                                        value={producto.cantidad}
+                                                        onChange={(e) => handleChangeProducto(index, 'cantidad', e.target.value)}
+                                                        required
+                                                    />
+                                                </td>
+                                                <td>${producto.subtotal}</td>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Descripción"
+                                                        value={producto.descripcion}
+                                                        onChange={(e) => handleChangeProducto(index, 'descripcion', e.target.value)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <button className="delete-button" onClick={() => handleEliminarProducto(index)}>
+                                                        <img src="../img/delete.png" alt="Eliminar Producto" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                <button type="button" className="new-quote-button" onClick={handleAgregarProducto}>
+                                    Agregar Otro Producto
+                                </button>
+                            </div>
+                                        <div className="modal-buttons">
+                                            <button type="button" onClick={handleCloseModal} className="close-button">Cerrar</button>
+                                            <button type="submit" className="add-product-button">{editMode ? 'Actualizar' : 'Guardar'} Cotización</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Modal de confirmación de eliminación */}
+                        {showDeleteConfirmModal && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <h2>Confirmar eliminación</h2>
+                                    <p>¿Estás seguro que deseas eliminar a "{selectedCotizacion.id}"?</p>
+                                    <div className="modal-buttons">
+                                        <button onClick={closeDeleteConfirmModal} className="close-button">Cancelar</button>
+                                        <button onClick={handleEliminarCotizacion} className="delete-button">Sí</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="pagination">
                             <button className="pagination-button" onClick={handlePreviousPage} disabled={currentPage === 1}>Ant</button>
