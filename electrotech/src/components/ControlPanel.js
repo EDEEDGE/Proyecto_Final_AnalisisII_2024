@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../components/ControlPanel.css';
 
@@ -6,7 +6,9 @@ const ControlPanel = () => {
     const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
     const [userName, setUserName] = useState('');
     const [contadores, setContadores] = useState({ clientes: 0, cotizaciones: 0, productos: 0 });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
+    const sidebarRef = useRef(null);
 
     useEffect(() => {
         const storedUserName = localStorage.getItem('userName');
@@ -70,6 +72,33 @@ const ControlPanel = () => {
         }
     };
 
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+
+    const closeSidebar = () => {
+        setIsSidebarOpen(false);
+    };
+
+    // Detectar clic fuera del menú para cerrarlo
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+                setIsSidebarOpen(false);
+            }
+        };
+
+        if (isSidebarOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isSidebarOpen]);
+
     return (
         <>
             <header className="header">
@@ -81,22 +110,25 @@ const ControlPanel = () => {
                         <option value="cerrar-sesion">Cerrar Sesión</option>
                     </select>
                 </div>
+                <button className="menu-toggle" onClick={toggleSidebar}>
+                    ☰
+                </button>
             </header>
             <div className="container">
-                <nav className="sidebar">
-                    <Link to="/ControlPanel">
+                <nav ref={sidebarRef} className={`sidebar ${isSidebarOpen ? 'active' : ''}`}>
+                    <Link to="/ControlPanel" onClick={closeSidebar}>
                         <button className="sidebar-button active"><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
                     </Link>
-                    <Link to="/Cotizaciones">
+                    <Link to="/Cotizaciones" onClick={closeSidebar}>
                         <button className="sidebar-button"><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
                     </Link>
-                    <Link to="/Clientes">
+                    <Link to="/Clientes" onClick={closeSidebar}>
                         <button className="sidebar-button"><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
                     </Link>
-                    <Link to="/Productos">
+                    <Link to="/Productos" onClick={closeSidebar}>
                         <button className="sidebar-button"><img src="../img/productos1.png" alt="Productos" /> Productos</button>
                     </Link>
-                    <Link to="/Usuarios">
+                    <Link to="/Usuarios" onClick={closeSidebar}>
                         <button className="sidebar-button"><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
                     </Link>
                 </nav>

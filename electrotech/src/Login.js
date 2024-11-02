@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
@@ -8,6 +8,15 @@ function Login() {
     const [nombre, setNombre] = useState('');
     const [credenciales, setCredenciales] = useState('');
     const [error, setError] = useState('');
+    const [showModal, setShowModal] = useState(false);
+
+    // useEffect para mostrar el modal si el usuario es redirigido
+    useEffect(() => {
+        if (localStorage.getItem('redirected') === 'true') {
+            setShowModal(true);
+            localStorage.removeItem('redirected'); // Elimina la marca
+        }
+    }, []);
 
     const handleLoginClick = async () => {
         try {
@@ -15,13 +24,13 @@ function Login() {
                 nombre,
                 credenciales
             });
-            // Suponiendo que el token y el nombre se devuelven en la respuesta
+            // Suponiendo que el token se devuelve en la respuesta
             const { nuevoToken } = response.data;
             localStorage.setItem('token', nuevoToken); // Guarda el token en localStorage
-    
+
             // Guarda el nombre del usuario en localStorage
-            localStorage.setItem('userName', nombre); // Cambia esto si `nombre` no es el nombre que deseas almacenar
-    
+            localStorage.setItem('userName', nombre); // Cambia esto si nombre no es el nombre que deseas almacenar
+
             navigate('/ControlPanel'); // Redirige al panel de control
         } catch (error) {
             if (error.response) {
@@ -31,6 +40,10 @@ function Login() {
             }
         }
     };    
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
 
     return (
         <div className="page-container">
@@ -66,6 +79,17 @@ function Login() {
                     <button className="login-button" onClick={handleLoginClick}>Login</button>
                 </div>
             </div>
+
+            {/* Modal de mensaje de redirección */}
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>Acceso Denegado</h2>
+                        <p>Debes iniciar sesión primero.</p>
+                        <button type="button" onClick={handleCloseModal} className="close-button">Cerrar</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

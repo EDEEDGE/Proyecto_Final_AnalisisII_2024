@@ -86,10 +86,79 @@ const obtenerUsuarios = async (req, res) => {
     }
 };
 
+const editarUsuario = async (req, res) => {
+    const { id } = req.params; // Obtener el ID del usuario desde los parámetros de la solicitud
+    const { nombre, credenciales } = req.body; // Obtener el nombre y credenciales del cuerpo de la solicitud
+
+    try {
+        // Buscar el usuario en la base de datos
+        const usuario = await Usuario.findByPk(id);
+        
+        if (!usuario) {
+            return res.status(404).json({ mensaje: 'Usuario no encontrado...' });
+        }
+
+        // Actualizar el nombre del usuario
+        usuario.nombre = nombre;
+
+        // Si se proporciona una nueva contraseña, encriptarla
+        if (credenciales) {
+            usuario.credenciales = await bcrypt.hash(credenciales, 10);
+        }
+
+        // Guardar los cambios en la base de datos
+        await usuario.save();
+
+        // Responder solo con los datos necesarios
+        res.status(200).json({ 
+            mensaje: 'Usuario actualizado correctamente...', 
+            usuario: { id: usuario.id, nombre: usuario.nombre } // Ensuring we return the right fields
+        });
+    } catch (error) {
+        console.error('Error al actualizar usuario:', error);
+        res.status(500).json({ mensaje: 'Error en el servidor...' });
+    }
+};
+
+const eliminarUsuario = async (req, res) => {
+    try {
+        const { id } = req.params; // Get the user ID from the request parameters
+        const usuario = await Usuario.findByPk(id);
+        
+        if (!usuario) {
+            return res.status(404).json({ mensaje: 'Usuario no encontrado...' });
+        }
+        
+        await usuario.destroy(); // Delete the user
+        res.status(200).json({ mensaje: 'Usuario eliminado correctamente...' });
+    } catch (error) {
+        console.error('Error al eliminar usuario:', error);
+        res.status(500).json({ mensaje: 'Error en el servidor...' });
+    }
+};
+
+// Add this function in your usuarios controller
+const obtenerIdActual = async (req, res) => {
+    try {
+        const usuarioId = req.user.id; // Assuming req.user contains the authenticated user's info
+        if (!usuarioId) {
+            return res.status(401).json({ mensaje: 'Usuario no autorizado...' });
+        }
+        res.status(200).json({ id: usuarioId });
+    } catch (error) {
+        console.error('Error al obtener ID del usuario actual:', error);
+        res.status(500).json({ mensaje: 'Error en el servidor...' });
+    }
+};
+
+
 //exportamos los metodos 
 module.exports = {
     registrarUsuario, 
     login,
     obtenerPerfil,
     obtenerUsuarios,
+    eliminarUsuario,
+    editarUsuario,
+    obtenerIdActual,
 };

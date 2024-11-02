@@ -5,32 +5,17 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #2ca0ff; /* Fondo celeste */
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: auto;
-    padding: 20px;
-}
-
 .page-container {
     width: 100vw;
-    min-height: 100vh;
+    height: 100vh;
     background-color: #2ca0ff;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
-    margin: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
 }
 
-/* El resto de tus estilos se mantienen igual */
+/* Contenedor principal */
 .login-container {
     display: flex;
     background-color: white;
@@ -112,7 +97,7 @@ body {
 .login-button {
     width: 80%;
     padding: 10px;
-    background-color: #007BFF; /* Azul */
+    background-color: #007BFF;
     color: white;
     border: none;
     border-radius: 5px;
@@ -125,14 +110,70 @@ body {
     background-color: #0056b3;
 }
 
-/* Enlace de contraseña olvidada */
-.forgot-password {
-    margin-top: 10px;
-    color: #007BFF;
-    text-decoration: none;
-    font-size: 14px;
+/* Responsivo para tablets */
+@media (max-width: 1023px) and (min-width: 768px) {
+    .login-container {
+        width: 90%;
+        height: auto;
+    }
+
+    .left-section, .right-section {
+        padding: 15px;
+    }
+
+    .store-image {
+        width: 250px;
+    }
+
+    .user-icon {
+        width: 80px;
+        height: 80px;
+    }
+
+    .input-box {
+        font-size: 14px;
+    }
+
+    .login-button {
+        font-size: 14px;
+        padding: 8px;
+    }
 }
 
-.forgot-password:hover {
-    text-decoration: underline;
+/* Responsivo para móviles */
+@media (max-width: 767px) {
+    .page-container {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .login-container {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+    }
+
+    .separator {
+        display: none;
+    }
+
+    .store-image {
+        width: 200px;
+    }
+
+    .user-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .input-box {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .login-button {
+        font-size: 14px;
+        padding: 8px;
+    }
+
 }
