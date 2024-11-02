@@ -35,7 +35,7 @@ const Usuarios = () => {
         // Fetch current user ID based on token or userName
         const fetchCurrentUserId = async () => {
             try {
-                const response = await fetch('https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/usuarios/obtenerIdActual', {
+                const response = await fetch('http://localhost:3002/api/usuarios/obtenerIdActual', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -50,7 +50,7 @@ const Usuarios = () => {
 
         const fetchUsuarios = async () => {
             try {
-                const response = await fetch('https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/usuarios/obtenerUsuarios', {
+                const response = await fetch('http://localhost:3002/api/usuarios/obtenerUsuarios', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -100,7 +100,7 @@ const Usuarios = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/usuarios/registrar', {
+            const response = await fetch('http://localhost:3002/api/usuarios/registrar', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ const Usuarios = () => {
             : { nombre, credenciales: newPassword };
     
         try {
-            const response = await fetch(`https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/usuarios/editar/${editUserId}`, {
+            const response = await fetch(`http://localhost:3002/api/usuarios/editar/${editUserId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ const Usuarios = () => {
     
     const handleDeleteUser = async () => {
         try {
-            await fetch(`https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/usuarios/eliminar/${deleteUserId}`, {
+            await fetch(`http://localhost:3002/api/usuarios/eliminar/${deleteUserId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`

@@ -28,6 +28,7 @@ app.use(express.json());
 // Servir archivos estaticos desde la carpeta build de React
 app.use(express.static(path.join(__dirname, 'build')));
 
+
 app.get('/', (req, res) => {
     res.send('¡Bienvenido!, la aplicación esta funcionando correctamente... ');
 });
