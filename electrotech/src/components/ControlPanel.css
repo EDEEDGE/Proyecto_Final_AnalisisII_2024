@@ -1,19 +1,8 @@
+/* Estilos globales */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-html, body, #root {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-#root {
-    display: flex; /* o display: grid; dependiendo de tu layout */
-    flex-direction: column; /* para flexbox */
 }
 
 /* Header styles */
@@ -21,14 +10,27 @@ html, body, #root {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #295274; /* Color celeste */
-    padding: 10px 20px;
+    background-color: #295274;
+}
+
+.header .menu-toggle {
+    border: none;
+    border-radius: 8px;
+    display: block;
+    cursor: pointer;
+    font-size: 24px;
+    background-color: #295274;
+    color: white;
+}
+
+.menu-toggle:hover{
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Sidebar styles */
 .sidebar {
     width: 340px;
-    background-color: #295274; /* Mismo color que el header */
+    background-color: #295274;
     padding: 20px;
     height: 100%;
     flex-wrap: wrap;
@@ -40,7 +42,6 @@ html, body, #root {
     height: 50px;
 }
 
-
 /* User info styles */
 .user-info {
     display: flex;
@@ -50,38 +51,52 @@ html, body, #root {
 .usr-icon {
     width: 30px;
     height: 30px;
-    filter: brightness(0) invert(1); /*Invierte el color de los iconos*/
+    filter: brightness(0) invert(1);
 }
 
 .employee-select {
     margin-left: 10px;
     padding: 5px;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0); /* Fondo transparente */
-    border: none;
-    color: white;
+    background-color: rgba(255, 255, 255, 0);
+    color: rgb(0, 0, 0);
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.employee-select:hover {
+    border-color: rgba(0, 0, 0, 0.5);
+}
+
+.employee-select:focus {
+    outline: none;
+    border-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Dropdown styles */
+.employee-select option {
+    background-color: rgba(255, 255, 255, 1);
+    color: rgb(0, 0, 0);
 }
 
 .container {
     display: flex;
-    height: calc(100vh - 70px); /* Altura del header */
-    overflow: auto; /* Para permitir desplazamiento si es necesario */
-    flex-direction: row ;
+    height: calc(100vh - 70px);
+    overflow: auto;
+    flex-direction: row;
 }
 
 /* Sidebar button styles */
 .sidebar-button {
     width: 100%;
     padding: 10px;
-    border: none;
     background-color: transparent;
     display: flex;
     align-items: center;
     margin: 10px 0;
     cursor: pointer;
     font-size: 16px;
-    color: #fff; /* Texto en blanco para el panel izquierdo */
-    transition: background-color 0.3s;/*Para efecto del hover */
+    color: #fff;
+    transition: background-color 0.3s;
     font-weight: 600;
 }
 
@@ -89,19 +104,19 @@ html, body, #root {
     width: 24px;
     height: 24px;
     margin-right: 10px;
-    filter: brightness(0) invert(1); /*Invierte el color de los iconos*/
+    filter: brightness(0) invert(1);
 }
 
 /* Hover effect for sidebar buttons */
 .sidebar-button:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Fondo más claro al pasar el mouse */
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-button.active {
-    background-color: #2ac3d3;    
+    background-color: #2ac3d3;
 }
 
-/* Estios del Main*/
+/* Main styles */
 .main {
     height: 100%;
     flex: 1;
@@ -112,7 +127,7 @@ html, body, #root {
 .main-header {
     display: flex;
     align-items: center;
-    background-color: #ecebeb; /* Color gris */
+    background-color: #ecebeb;
     padding: 10px;
     border-radius: 5px;
     height: 70px;
@@ -123,12 +138,12 @@ html, body, #root {
     width: 30px;
     height: 30px;
     margin-right: 10px;
-    filter: grayscale(100%); /* Convierte el icono a gris */
+    filter: grayscale(100%);
     opacity: 0.5;
 }
 
 .panel-title {
-    margin-top: 40px; /* Espacio entre el encabezado gris y el título */
+    margin-top: 40px;
     margin-left: 50px;
     font-size: 40px;
     font-weight: lighter;
@@ -137,14 +152,12 @@ html, body, #root {
 .cards {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 20px;
-    margin-left: 40px;
-    margin-right: 40px;
+    margin: 20px 40px;
 }
 
 .card {
     display: flex;
-    flex: 1 1 220px; /* Responsive */
+    flex: 1 1 220px;
     margin: 10px;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -183,3 +196,115 @@ h3 {
     font-weight: bold;
     margin-top: 5px;
 }
+
+/* Responsivo para tablets */
+@media (max-width: 1023px) and (min-width: 768px) {
+    .sidebar {
+        width: 250px;
+    }
+
+    .sidebar-button {
+        font-size: 14px;
+    }
+
+    .cards {
+        margin: 10px 20px;
+    }
+
+    .card {
+        flex: 1 1 200px;
+    }
+}
+
+/* Responsivo para móviles */
+@media (max-width: 767px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 10px;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    .main {
+        padding: 10px;
+    }
+
+    .panel-title {
+        font-size: 30px;
+        margin-left: 20px;
+        margin-top: 20px;
+    }
+
+    .cards {
+        margin: 10px;
+    }
+
+    .card {
+        flex: 1 1 100%;
+        margin: 5px 0;
+    }
+}
+
+/* Barra de navegación en pantallas pequeñas */
+@media (max-width: 767px) {
+    /* Ajustar la barra superior y el botón del menú */
+    .header {
+        position: relative;
+        width: 100%;
+        background-color: #295274;
+        padding: 10px;
+    }
+
+    .header .menu-toggle {
+        border: none;
+        border-radius: 8px;
+        display: block;
+        cursor: pointer;
+        font-size: 24px;
+        background-color: #295274;
+        color: white;
+    }
+
+    .menu-toggle:hover{
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+   
+    /* Ocultar la barra lateral por defecto en pantallas pequeñas */
+    .sidebar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 250px;
+        height: 100%;
+        background-color: #295274;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 1;
+    }
+
+    /* Mostrar la barra lateral cuando está activa */
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    /* Ocultar iconos e información cuando el menú está cerrado */
+    .container {
+        flex-direction: column;
+    }
+
+    /* Ajustar el contenido principal */
+    .main {
+        width: 100%;
+        padding-top: 50px; /* Deja espacio para el menú superior */
+    }
+}
+

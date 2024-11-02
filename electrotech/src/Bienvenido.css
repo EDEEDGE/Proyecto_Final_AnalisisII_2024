@@ -11,7 +11,6 @@ body {
 
 .container {
     background-color: rgb(255, 255, 255); /* Color temporal para verificar la visualización */
-    height: 100vh; /* Asegura que ocupe toda la pantalla */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -19,7 +18,7 @@ body {
 }
 
 .half-circle {
-    width: 100%;
+    width: 100vw;
     height: 50vh;
     background-color: #00CFFF; /* Color celeste */
     border-bottom-left-radius: 100% 50%;
@@ -32,25 +31,63 @@ body {
     align-items: flex-end;
 }
 
+/* Ajuste para pantallas grandes */
+@media (min-width: 1025px) {
+  .center-image {
+    width: 800px;
+    height: 120px;
+  }
+  .start-button {
+    font-size: 24px;
+    padding: 8px 16px;
+  }
+}
+
+/* Ajuste para tabletas */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .center-image {
+    width: 600px;
+    height: 100px;
+  }
+  .start-button {
+    font-size: 20px;
+    padding: 6px 14px;
+  }
+}
+
+/* Ajuste para móviles */
+@media (max-width: 767px) {
+  .center-image {
+    width: 300px;
+    height: 80px;
+    margin-bottom: 30px; /* Para ajustar la imagen en móviles */
+  }
+  .start-button {
+    font-size: 18px;
+    padding: 6px 12px;
+    bottom: 150px; /* Ajuste para reducir el espacio en pantallas pequeñas */
+  }
+  .half-circle {
+    height: 40vh; /* Reducir el tamaño del semicírculo en móviles */
+  }
+}
+
 .center-image {
-    width: 1000px;
-    height: 150px;
+    width: 85vw;
+    height: 20vh;
     margin-bottom: 50px; /* Para colocar la imagen un poco arriba del borde del semicírculo */
     z-index: 1;
 }
 
 .start-button {
-    position: absolute;
+    position:absolute;
     bottom: 200px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
     background-color: #d3d3d3; /* Color gris */
-    color: rgb(0, 0, 0);
+    color: rgb(53, 53, 53);
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 30px;
+    font-size: 1.5rem;
     z-index: 1;
 }
 

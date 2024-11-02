@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../components/Clientes.css';
 
 const Clientes = () => {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
@@ -24,6 +25,8 @@ const Clientes = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
+    
+    const sidebarRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -103,6 +106,13 @@ const Clientes = () => {
         setSearchTerm(e.target.value); // Actualizar el término de búsqueda
     };
 
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+
+    const closeSidebar = () => {
+        setIsSidebarOpen(false);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -181,6 +191,25 @@ const Clientes = () => {
     const startIdx = (currentPage - 1) * itemsPerPage;
     const currentClientes = filteredClientes.slice(startIdx, startIdx + itemsPerPage);
 
+    // Detectar clic fuera del menú para cerrarlo
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+                setIsSidebarOpen(false);
+            }
+        };
+
+        if (isSidebarOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isSidebarOpen]);
+
     return (
         <>
             <header className="header">
@@ -192,22 +221,25 @@ const Clientes = () => {
                         <option value="logout">Cerrar Sesión</option>
                     </select>
                 </div>
+                <button className="menu-toggle" onClick={toggleSidebar}>
+                    ☰
+                </button>
             </header>
             <div className="container">
-                <nav className="sidebar">
-                    <Link to="/ControlPanel">
+                <nav ref={sidebarRef} className={`sidebar ${isSidebarOpen ? 'active' : ''}`}>
+                    <Link to="/ControlPanel" onClick={closeSidebar}>
                         <button className="sidebar-button"><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
                     </Link>
-                    <Link to="/Cotizaciones">
+                    <Link to="/Cotizaciones" onClick={closeSidebar}>
                         <button className="sidebar-button"><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
                     </Link>
-                    <Link to="/Clientes">
+                    <Link to="/Clientes" onClick={closeSidebar}>
                         <button className="sidebar-button active"><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
                     </Link>
-                    <Link to="/Productos">
+                    <Link to="/Productos" onClick={closeSidebar}>
                         <button className="sidebar-button"><img src="../img/productos1.png" alt="Productos" /> Productos</button>
                     </Link>
-                    <Link to="/Usuarios">
+                    <Link to="/Usuarios" onClick={closeSidebar}>
                         <button className="sidebar-button"><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
                     </Link>
                 </nav>

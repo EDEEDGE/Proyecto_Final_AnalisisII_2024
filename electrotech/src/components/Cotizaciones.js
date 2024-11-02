@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
 import '../components/Cotizaciones.css';
 
 const Cotizaciones = () => {
     const [showModal, setShowModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
+    const [showSendEmailConfirmModal, setShowSendEmailConfirmModal] = useState(false);
+    const [showEmailSentSuccessModal, setShowEmailSentSuccessModal] = useState(false);
+    const [showEditSuccessModal, setShowEditSuccessModal] = useState(false);
     const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
     const [selectedCotizacion, setSelectedCotizacion] = useState(null);
@@ -16,8 +19,16 @@ const Cotizaciones = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [productPrices, setProductPrices] = useState({});
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    // Add new state for error message
+    const [errorMessage, setErrorMessage] = useState('');
+    const [showErrorModal, setShowErrorModal] = useState(false);
+
     const itemsPerPage = 10;
+    
     const navigate = useNavigate();
+    const sidebarRef = useRef(null);
 
     // Función para obtener el precio de un producto
     const fetchProductPrice = async (productId) => {
@@ -65,6 +76,7 @@ const Cotizaciones = () => {
     };
 
     useEffect(() => {
+
         const storedUserName = localStorage.getItem('userName');
         setUserName(storedUserName || 'Usuario');
         fetchCotizaciones();
@@ -92,13 +104,39 @@ const Cotizaciones = () => {
         }
     };
 
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+
+    const closeSidebar = () => {
+        setIsSidebarOpen(false);
+    };
+
     const openEditModal = (cotizacion) => {
         setEditMode(true);
-        setIdCotizacion(cotizacion.id); // Guarda el ID de la cotización
-        setNuevoCliente(cotizacion.idCliente); // Carga el ID del cliente
-        console.log("Productos de la cotización:", cotizacion.DetalleCotizacions); // Verifica que los productos existan
-        setProductos(cotizacion.DetalleCotizacions || []); // Carga los productos existentes
-        setShowModal(true); // Abre el modal
+        setSelectedCotizacion(cotizacion);
+        setIdCotizacion(cotizacion.id);
+        setNuevoCliente(cotizacion.idCliente);
+        
+        // Normalizar los datos de los productos existentes
+        const productosExistentes = cotizacion.DetalleCotizacions.map(producto => ({
+            idProducto: producto.idProducto,
+            cantidad: Math.floor(producto.cantidad), // Eliminar decimales
+            descripcion: producto.descripcion,
+            precioUnitario: Math.floor(producto.precioUnitario), // Eliminar decimales
+            subtotal: Math.floor(producto.subtotal) // Eliminar decimales
+        }));
+        
+        setProductos(productosExistentes);
+        
+        // Normalizar los precios
+        const prices = {};
+        cotizacion.DetalleCotizacions.forEach(producto => {
+            prices[producto.idProducto] = Math.floor(producto.precioUnitario);
+        });
+        setProductPrices(prices);
+        
+        setShowModal(true);
     };
 
     const handleOpenModal = () => {
@@ -120,32 +158,53 @@ const Cotizaciones = () => {
         setProductos([...productos, { idProducto: '', cantidad: '', descripcion: '', subtotal: 0 }]);
     };
 
-     // Actualizar handleChangeProducto para manejar la obtención del precio
-     const handleChangeProducto = async (index, field, value) => {
+    // Modified handleChangeProducto to check for duplicates
+    const handleChangeProducto = async (index, field, value) => {
         const updatedProductos = [...productos];
-        updatedProductos[index][field] = value;
-
+    
         if (field === 'idProducto' && value) {
-            // Si ya tenemos el precio en cache, usarlo
-            if (productPrices[value]) {
-                const precio = productPrices[value];
-                updatedProductos[index].precioUnitario = precio;
-                updatedProductos[index].subtotal = precio * (updatedProductos[index].cantidad || 0);
-            } else {
-                // Si no está en cache, obtenerlo de la API
-                const precio = await fetchProductPrice(value);
-                setProductPrices(prev => ({ ...prev, [value]: precio }));
-                updatedProductos[index].precioUnitario = precio;
-                updatedProductos[index].subtotal = precio * (updatedProductos[index].cantidad || 0);
+            const newProductId = value.toString();
+    
+            // Verificar duplicados en TODOS los productos (existentes y nuevos)
+            const isDuplicate = productos.some((producto, idx) => idx !== index && producto.idProducto?.toString() === newProductId);
+            if (isDuplicate) {
+                setErrorMessage('Este producto ya existe en la cotización. Por favor, modifica la cantidad del producto existente en lugar de agregar uno nuevo.');
+                setShowErrorModal(true);
+                updatedProductos[index].idProducto = '';
+                setProductos(updatedProductos);
+                return;
             }
-        } else if (field === 'cantidad' && value) {
-            const precio = updatedProductos[index].precioUnitario || 0;
-            updatedProductos[index].subtotal = precio * value;
+    
+            setErrorMessage('');
+            setShowErrorModal(false);
+    
+            // Obtener el precio del nuevo producto
+            const precio = await fetchProductPrice(value);
+            updatedProductos[index] = {
+                ...updatedProductos[index],
+                idProducto: value,
+                precioUnitario: Math.floor(precio),
+                subtotal: Math.floor(precio * (updatedProductos[index].cantidad || 0)) // Multiplica por cantidad existente o por 1 si no hay
+            };
+            setProductPrices(prev => ({ ...prev, [value]: Math.floor(precio) }));
+        } else if (field === 'cantidad') {
+            const cantidad = parseInt(value) || updatedProductos[index].cantidad || 0; // Mantener cantidad actual o asignar 1 si no es válida
+            const precioUnitario = updatedProductos[index].precioUnitario;
+    
+            // Actualizar siempre la cantidad y el subtotal
+            updatedProductos[index] = {
+                ...updatedProductos[index],
+                cantidad: cantidad,
+                subtotal: precioUnitario ? Math.floor(precioUnitario * cantidad) : updatedProductos[index].subtotal
+            };
+        } else {
+            updatedProductos[index][field] = value;
         }
-
-        setProductos(updatedProductos);
+    
+        // Crear una nueva referencia de array para forzar actualización
+        setProductos([...updatedProductos]);
     };
-
+    
     // Eliminar un producto específico
     const handleEliminarProducto = (index) => {
         const updatedProductos = productos.filter((_, i) => i !== index);
@@ -173,7 +232,7 @@ const Cotizaciones = () => {
 
             const data = await response.json();
             if (response.ok) {
-                alert(`Cotización ${editMode ? 'actualizada' : 'creada'} con éxito`);
+                setShowEditSuccessModal(true);  // Show the edit success modal
                 handleCloseModal();
                 fetchCotizaciones();
             } else {
@@ -218,6 +277,11 @@ const Cotizaciones = () => {
         }
     };
 
+    const handleSendEmailConfirm = (idCotizacion) => {
+        setSelectedCotizacion(idCotizacion);
+        setShowSendEmailConfirmModal(true);
+    };
+    
     const handleSendEmail = async (idCotizacion) => {
         try {
             const response = await fetch(`http://localhost:3002/api/cotizaciones/enviar/correo/${idCotizacion}`, {
@@ -228,7 +292,7 @@ const Cotizaciones = () => {
                 }
             });
             if (response.ok) {
-                alert("Correo enviado exitosamente.");
+                setShowEmailSentSuccessModal(true);
             } else {
                 const data = await response.json();
                 alert(`Error al enviar el correo: ${data.mensaje}`);
@@ -236,10 +300,11 @@ const Cotizaciones = () => {
         } catch (error) {
             console.error("Error al enviar el correo:", error);
             alert("Hubo un problema al enviar el correo.");
+        } finally {
+            setShowSendEmailConfirmModal(false);
         }
     };
     
-
     const totalPages = Math.ceil(cotizaciones.length / itemsPerPage);
     // Filtrar cotizaciones por ID según el término de búsqueda
     const filteredCotizaciones = cotizaciones.filter(cotizacion => 
@@ -259,6 +324,25 @@ const Cotizaciones = () => {
         }
     };
 
+    // Detectar clic fuera del menú para cerrarlo
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+                setIsSidebarOpen(false);
+            }
+        };
+
+        if (isSidebarOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isSidebarOpen]);
+
     return (
         <>
             <header className="header">
@@ -270,22 +354,25 @@ const Cotizaciones = () => {
                         <option value="logout">Cerrar Sesión</option>
                     </select>
                 </div>
+                <button className="menu-toggle" onClick={toggleSidebar}>
+                    ☰
+                </button>
             </header>
             <div className="container">
-                <nav className="sidebar">
-                    <Link to="/ControlPanel">
+            <nav ref={sidebarRef} className={`sidebar ${isSidebarOpen ? 'active' : ''}`}>
+                    <Link to="/ControlPanel" onClick={closeSidebar}>
                         <button className="sidebar-button"><img src="../img/inicio.png" alt="Inicio" /> Inicio</button>
                     </Link>
-                    <Link to="/Cotizaciones">
+                    <Link to="/Cotizaciones" onClick={closeSidebar}>
                         <button className="sidebar-button active"><img src="../img/cotizaciones.png" alt="Cotizaciones" /> Cotizaciones</button>
                     </Link>
-                    <Link to="/Clientes">
+                    <Link to="/Clientes" onClick={closeSidebar}>
                         <button className="sidebar-button"><img src="../img/usuario.png" alt="Clientes" /> Clientes</button>
                     </Link>
-                    <Link to="/Productos">
+                    <Link to="/Productos" onClick={closeSidebar}>
                         <button className="sidebar-button"><img src="../img/productos1.png" alt="Productos" /> Productos</button>
                     </Link>
-                    <Link to="/Usuarios">
+                    <Link to="/Usuarios" onClick={closeSidebar}>
                         <button className="sidebar-button"><img src="../img/usuarios.png" alt="Usuarios" /> Usuarios</button>
                     </Link>
                 </nav>
@@ -341,12 +428,12 @@ const Cotizaciones = () => {
                             </tbody>
                         </table>
 
-                        {/* Modal para crear/editar cotización */}
+                        {/* Single Modal for Create/Edit */}
                         {showModal && (
                             <div className="modal-overlay">
                                 <div className="modal-content">
                                     <img src="../img/add.png" alt="Agregar" className="modal-icon" />
-                                    <h2>{editMode ? 'Editar Cotización' : 'Editar Cotizacion'}</h2>
+                                    <h2>{editMode ? 'Editar Cotización' : 'Nueva Cotización'}</h2>
                                     <form className="modal-form" onSubmit={handleSubmit}>
                                         <label>Cliente</label>
                                         <input
@@ -359,68 +446,104 @@ const Cotizaciones = () => {
                                         <div>
                                             <h3>Productos</h3>
                                             <table className="details-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID Producto</th>
-                                                        <th>Cantidad</th>
-                                                        <th>Subtotal</th>
-                                                        <th>Descripción</th>
-                                                        <th>Eliminar</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {productos.map((producto, index) => (
-                                                        <tr key={index}>
-                                                            <td>
-                                                                <input
-                                                                    type="text"
-                                                                    placeholder="ID Producto"
-                                                                    value={producto.idProducto}
-                                                                    onChange={(e) => handleChangeProducto(index, 'idProducto', e.target.value)}
-                                                                    required
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <input
-                                                                    type="number"
-                                                                    placeholder="Cantidad"
-                                                                    value={producto.cantidad}
-                                                                    onChange={(e) => handleChangeProducto(index, 'cantidad', e.target.value)}
-                                                                    required
-                                                                />
-                                                            </td>
-                                                            <td>${producto.subtotal}</td>
-                                                            <td>
-                                                                <input
-                                                                    type="text"
-                                                                    placeholder="Descripción"
-                                                                    value={producto.descripcion}
-                                                                    onChange={(e) => handleChangeProducto(index, 'descripcion', e.target.value)}
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <button className="delete-button" onClick={() => handleEliminarProducto(index)}>
-                                                                    <img src="../img/delete.png" alt="Eliminar Producto" />
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
+            <thead>
+                <tr>
+                    <th>ID Producto</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                    <th>Descripción</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+            {productos.map((producto, index) => (
+                <tr key={index}>
+                    <td>
+                        <input
+                            type="text"
+                            placeholder="ID Producto"
+                            value={producto.idProducto || ''}
+                            onChange={(e) => handleChangeProducto(index, 'idProducto', e.target.value)}
+                            required
+                        />
+                    </td>
+                    <td>
+                        <input
+                            type="number"
+                            placeholder="Cantidad"
+                            value={producto.cantidad || ''}
+                            onChange={(e) => handleChangeProducto(index, 'cantidad', e.target.value)}
+                            required
+                        />
+                    </td>
+                    <td>${producto.subtotal || 0}</td>
+                    <td>
+                        <input
+                            type="text"
+                            placeholder="Descripción"
+                            value={producto.descripcion || ''}
+                            onChange={(e) => handleChangeProducto(index, 'descripcion', e.target.value)}
+                        />
+                    </td>
+                    <td>
+                        <button 
+                            type="button"
+                            className="delete-button"
+                            onClick={() => handleEliminarProducto(index)}
+                        >
+                            <img src="../img/delete.png" alt="Eliminar" />
+                        </button>
+                    </td>
+                </tr>
+            ))}
+        </tbody>
+        </table>
                                             <button type="button" className="new-quote-button" onClick={handleAgregarProducto}>
                                                 Agregar Otro Producto
                                             </button>
                                         </div>
                                         <div className="modal-buttons">
-                                            <button type="button" onClick={handleCloseModal} className="close-button">Cerrar</button>
-                                            <button type="submit" className="add-product-button">{editMode ? 'Actualizar' : 'Guardar'} Cotización</button>
+                                            <button type="button" onClick={handleCloseModal} className="close-button">
+                                                Cerrar
+                                            </button>
+                                            <button type="submit" className="add-product-button">
+                                                {editMode ? 'Actualizar' : 'Guardar'} Cotización
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         )}
 
-                        {/* Modal de confirmación de eliminación */}
+                        {/* Error Modal */}
+                        {showErrorModal && (
+                            <div className="modal-overlay" style={{ zIndex: 1100 }}>
+                                <div className="modal-content" style={{ maxWidth: '400px' }}>
+                                    <h2>Error</h2>
+                                    <div style={{
+                                        color: 'red',
+                                        padding: '15px',
+                                        marginBottom: '15px',
+                                        borderRadius: '4px',
+                                        backgroundColor: '#ffe6e6',
+                                        textAlign: 'center'
+                                    }}>
+                                        {errorMessage}
+                                    </div>
+                                    <div className="modal-buttons">
+                                        <button 
+                                            onClick={() => setShowErrorModal(false)} 
+                                            className="close-button"
+                                            style={{ width: '100%' }}
+                                        >
+                                            Entendido
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Delete Confirmation Modal */}
                         {showDeleteConfirmModal && (
                             <div className="modal-overlay">
                                 <div className="modal-content">
@@ -433,7 +556,6 @@ const Cotizaciones = () => {
                                 </div>
                             </div>
                         )}
-
                         {showModal && (
                             <div className="modal-overlay">
                                 <div className="modal-content">
@@ -520,6 +642,42 @@ const Cotizaciones = () => {
                                         <button type="button" onClick={handleCloseLogoutConfirmModal} className="close-button">Cancelar</button>
                                         <button onClick={handleLogout} className="delete-button">Sí</button>
                                     </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Confirm Send Email Modal */}
+                        {showSendEmailConfirmModal && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <h2>Confirmar Envío de Correo</h2>
+                                    <p>¿Estás seguro de que deseas enviar el correo para la cotización {selectedCotizacion}?</p>
+                                    <div className="modal-buttons">
+                                        <button onClick={() => setShowSendEmailConfirmModal(false)} className="close-button">Cancelar</button>
+                                        <button onClick={handleSendEmail} className="send-button">Enviar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Email Sent Success Modal */}
+                        {showEmailSentSuccessModal && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <h2>Correo Enviado</h2>
+                                    <p>El correo ha sido enviado exitosamente.</p>
+                                    <button onClick={() => setShowEmailSentSuccessModal(false)} className="close-button">Cerrar</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Edit Success Modal */}
+                        {showEditSuccessModal && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <h2>Edición Exitosa</h2>
+                                    <p>La cotización ha sido actualizada con éxito.</p>
+                                    <button onClick={() => setShowEditSuccessModal(false)} className="close-button">Cerrar</button>
                                 </div>
                             </div>
                         )}

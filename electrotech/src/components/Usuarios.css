@@ -380,3 +380,209 @@ body {
 .save-button:hover {
     background-color: #1f9fb1;
 }
+/* General table styles */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    overflow-x: auto; /* Enables horizontal scroll on small screens */
+}
+
+/* Table header and cells */
+.user-table th,
+.user-table td {
+    padding: 10px;
+    border: none;
+    text-align: center;
+}
+
+/* Header background and text color */
+.user-table th {
+    background-color: #ffecb6; /* Highlight in yellow */
+    color: #000; /* Black text for titles */
+}
+
+/* Alternate row background */
+.user-table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Alternate row color */
+}
+
+/* Responsive action buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 5px; /* Space between buttons */
+}
+
+/* Action button styles */
+.edit-button,
+.delete-button,
+.update-button {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 30px;
+}
+
+/* Action button colors */
+.edit-button {
+    background-color: #ffcc40; /* Yellow */
+}
+
+.delete-button {
+    background-color: #f44343; /* Red */
+}
+
+.update-button {
+    background-color: #8bfa92; /* Green */
+}
+
+/* Icon styles for action buttons */
+.edit-button img,
+.delete-button img,
+.update-button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Pagination styles */
+.pagination {
+    display: flex;
+    justify-content: flex-end; /* Aligns buttons to the right */
+    margin-top: 20px;
+}
+
+/* Pagination button styles */
+.pagination-button {
+    background: none; /* Flat buttons */
+    color: #2ac3d3; /* Main text color */
+    border: none; /* No border */
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 10px; /* Space between buttons */
+}
+
+/* Pagination hover effect */
+.pagination-button:hover {
+    color: #1f9fb1; /* Change color on hover */
+}
+
+/* General table styles */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    overflow-x: auto; /* Enables horizontal scroll on small screens */
+}
+
+/* Table header and cells */
+.user-table th,
+.user-table td {
+    padding: 8px; /* Reduced padding for a more compact look */
+    border: none;
+    text-align: center;
+}
+
+/* Header background and text color */
+.user-table th {
+    background-color: #ffecb6; /* Highlight in yellow */
+    color: #000; /* Black text for titles */
+}
+
+/* Alternate row background */
+.user-table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Alternate row color */
+}
+
+/* Responsive action buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 5px; /* Space between buttons */
+}
+
+/* Action button styles */
+.edit-button,
+.delete-button,
+.update-button {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px; /* Smaller width for buttons */
+    height: 25px; /* Smaller height for buttons */
+}
+
+/* Action button colors */
+.edit-button {
+    background-color: #ffcc40; /* Yellow */
+}
+
+.delete-button {
+    background-color: #f44343; /* Red */
+}
+
+.update-button {
+    background-color: #8bfa92; /* Green */
+}
+
+/* Icon styles for action buttons */
+.edit-button img,
+.delete-button img,
+.update-button img {
+    width: 15px; /* Smaller icon size */
+    height: 15px; /* Smaller icon size */
+}
+
+/* Pagination styles */
+.pagination {
+    display: flex;
+    justify-content: flex-end; /* Aligns buttons to the right */
+    margin-top: 20px;
+}
+
+/* Pagination button styles */
+.pagination-button {
+    background: none; /* Flat buttons */
+    color: #2ac3d3; /* Main text color */
+    border: none; /* No border */
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 10px; /* Space between buttons */
+}
+
+/* Pagination hover effect */
+.pagination-button:hover {
+    color: #1f9fb1; /* Change color on hover */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    /* Adjust table for smaller screens */
+    .user-table th,
+    .user-table td {
+        padding: 8px; /* Consistent padding */
+        display: block; /* Stack cells */
+        width: auto; /* Let width be auto */
+        text-align: left; /* Align text to the left for readability */
+    }
+
+    /* Action buttons */
+    .action-buttons {
+        flex-direction: column; /* Stack buttons vertically */
+    }
+
+    /* Adjust pagination layout */
+    .pagination {
+        flex-direction: column; /* Stack pagination buttons vertically */
+        align-items: flex-end; /* Align to the right */
+    }
+}
