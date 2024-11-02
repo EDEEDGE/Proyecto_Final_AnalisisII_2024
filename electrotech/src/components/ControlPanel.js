@@ -18,17 +18,17 @@ const ControlPanel = () => {
         const fetchContadores = async () => {
             try {
                 const [clientesRes, cotizacionesRes, productosRes] = await Promise.all([
-                    fetch('http://localhost:3002/api/clientes/obtener/cantidad/todos', {
+                    fetch('https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/clientes/obtener/cantidad/todos', {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
                     }),
-                    fetch('http://localhost:3002/api/cotizaciones/obtener/cantidad/todos', {
+                    fetch('https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/cotizaciones/obtener/cantidad/todos', {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
                     }),
-                    fetch('http://localhost:3002/api/productos/obtener/cantidad/todos', {
+                    fetch('https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/productos/obtener/cantidad/todos', {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }

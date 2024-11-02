@@ -118,7 +118,7 @@ const Clientes = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:3002/api/clientes/crear/nuevo', nuevoCliente, {
+            await axios.post('https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/clientes/crear/nuevo', nuevoCliente, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -135,7 +135,7 @@ const Clientes = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:3002/api/clientes/actualizar/${clienteAEditar.id}`, clienteAEditar, {
+            await axios.put(`https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/clientes/actualizar/${clienteAEditar.id}`, clienteAEditar, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -151,7 +151,7 @@ const Clientes = () => {
     const handleDelete = async () => {
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:3002/api/clientes/eliminar/${clienteAEliminar.id}`, {
+            await axios.delete(`https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/clientes/eliminar/${clienteAEliminar.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -167,7 +167,7 @@ const Clientes = () => {
     const fetchClientes = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:3002/api/clientes/obtener/todos', {
+            const response = await axios.get('https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/clientes/obtener/todos', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

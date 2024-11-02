@@ -111,7 +111,7 @@ const Productos = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:3002/api/productos/crear/nuevo', nuevoProducto, {
+            await axios.post('https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/productos/crear/nuevo', nuevoProducto, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -128,7 +128,7 @@ const Productos = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:3002/api/productos/actualizar/${productoAEditar.id}`, productoAEditar, {
+            await axios.put(`https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/productos/actualizar/${productoAEditar.id}`, productoAEditar, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -144,7 +144,7 @@ const Productos = () => {
     const handleDelete = async () => {
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:3002/api/productos/eliminar/${productoAEliminar.id}`, {
+            await axios.delete(`https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/productos/eliminar/${productoAEliminar.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -160,7 +160,7 @@ const Productos = () => {
     const fetchProductos = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:3002/api/productos/obtener/todos', {
+            const response = await axios.get('https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/productos/obtener/todos', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

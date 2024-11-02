@@ -33,7 +33,7 @@ const Cotizaciones = () => {
     // Función para obtener el precio de un producto
     const fetchProductPrice = async (productId) => {
         try {
-            const response = await fetch(`http://localhost:3002/api/productos/obtener/${productId}`, {
+            const response = await fetch(`https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/productos/obtener/${productId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const Cotizaciones = () => {
 
     const fetchCotizaciones = async () => {
         try {
-            const response = await fetch('http://localhost:3002/api/cotizaciones/obtener/todo', {
+            const response = await fetch('https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/cotizaciones/obtener/todo', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -218,8 +218,8 @@ const Cotizaciones = () => {
 
         try {
             const url = editMode
-                ? `http://localhost:3002/api/cotizaciones/actualizar/${idCotizacion}`
-                : 'http://localhost:3002/api/cotizaciones/crear/nuevo';
+                ? `https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/cotizaciones/actualizar/${idCotizacion}`
+                : 'https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/cotizaciones/crear/nuevo';
 
             const response = await fetch(url, {
                 method: editMode ? 'PUT' : 'POST',
@@ -256,7 +256,7 @@ const Cotizaciones = () => {
     const handleEliminarCotizacion = async () => {
         if (selectedCotizacion) {
             try {
-                const response = await fetch(`http://localhost:3002/api/cotizaciones/eliminar/${selectedCotizacion.id}`, {
+                const response = await fetch(`https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/cotizaciones/eliminar/${selectedCotizacion.id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -284,7 +284,7 @@ const Cotizaciones = () => {
     
     const handleSendEmail = async (idCotizacion) => {
         try {
-            const response = await fetch(`http://localhost:3002/api/cotizaciones/enviar/correo/${idCotizacion}`, {
+            const response = await fetch(`https://electrotech-b7fmc9escsercwca.westus-01.azurewebsites.net/api/cotizaciones/enviar/correo/${idCotizacion}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
